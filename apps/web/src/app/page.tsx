@@ -22,38 +22,44 @@ export default async function HomePage() {
       <SiteHeader user={user} />
       <main>
         <section className="mx-auto max-w-7xl px-6 pb-16 pt-20 md:pt-28">
-          <div className="max-w-3xl">
-            <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-text-muted">
-              Personal inventory
-            </p>
-            <h1 className="font-display text-5xl leading-[1.05] tracking-tight md:text-7xl">
-              Your wardrobe, jewelry, silver, and art —
-              <span className="text-text-secondary"> in one calm place.</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-              Snap a photo. AI fills in the details. Search by colour, occasion, or
-              the last time you wore it. Plan outfits. Pack for trips. Share folders
-              with the people you trust.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center gap-3">
-              <Link
-                href="/library"
-                className="rounded-md bg-accent px-5 py-3 text-sm font-medium text-text-onAccent transition-colors hover:bg-accent-hover"
-              >
-                Open library
-              </Link>
-              <Link
-                href="/library/add"
-                className="rounded-md border border-border-strong px-5 py-3 text-sm font-medium text-text-primary transition-colors hover:bg-bg-muted"
-              >
-                Add an item
-              </Link>
-              {!configured ? (
-                <span className="ml-2 text-xs text-text-muted">
-                  · Demo mode — connect Supabase to enable accounts
-                </span>
-              ) : null}
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,520px)] lg:gap-16">
+            {/* Text column */}
+            <div>
+              <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-text-muted">
+                Personal inventory
+              </p>
+              <h1 className="font-display text-5xl leading-[1.05] tracking-tight md:text-7xl">
+                Your wardrobe, jewelry, silver, and art —
+                <span className="text-text-secondary"> in one calm place.</span>
+              </h1>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
+                Snap a photo. AI fills in the details. Search by colour, occasion, or
+                the last time you wore it. Plan outfits. Pack for trips. Share folders
+                with the people you trust.
+              </p>
+              <div className="mt-10 flex flex-wrap items-center gap-3">
+                <Link
+                  href="/library"
+                  className="rounded-md bg-accent px-5 py-3 text-sm font-medium text-text-onAccent transition-colors hover:bg-accent-hover"
+                >
+                  Open library
+                </Link>
+                <Link
+                  href="/library/add"
+                  className="rounded-md border border-border-strong px-5 py-3 text-sm font-medium text-text-primary transition-colors hover:bg-bg-muted"
+                >
+                  Add an item
+                </Link>
+                {!configured ? (
+                  <span className="ml-2 text-xs text-text-muted">
+                    · Demo mode — connect Supabase to enable accounts
+                  </span>
+                ) : null}
+              </div>
             </div>
+
+            {/* Image collage — 4 categories, layered */}
+            <HeroCollage />
           </div>
         </section>
 
@@ -137,5 +143,71 @@ function SiteFooter() {
     <footer className="border-t border-border-subtle py-10 text-center text-xs text-text-muted">
       ClosetOS · early build · {new Date().getFullYear()}
     </footer>
+  );
+}
+
+// Layered hero image collage — one photo per category, arranged with subtle
+// rotation and offset so they overlap like polaroids on a moodboard.
+function HeroCollage() {
+  const tiles: { label: string; url: string; rotate: string; translate: string }[] = [
+    {
+      label: 'Apparel',
+      // Camel coat (verified earlier for d2)
+      url: 'https://images.unsplash.com/photo-1777448067392-235aec6a10e4?auto=format&fit=crop&w=600&q=70',
+      rotate: '-rotate-3',
+      translate: 'translate-y-2',
+    },
+    {
+      label: 'Jewelry',
+      // Diamond solitaire (verified earlier for d4)
+      url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=600&q=70',
+      rotate: 'rotate-2',
+      translate: '-translate-y-3',
+    },
+    {
+      label: 'Silver',
+      // Verified: "a tray with a silver tea pot and two cups on it"
+      url: 'https://images.unsplash.com/photo-1642582431503-5276a6b9798d?auto=format&fit=crop&w=600&q=70',
+      rotate: 'rotate-1',
+      translate: 'translate-y-1',
+    },
+    {
+      label: 'Artwork',
+      // Painting (existing d6)
+      url: 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?auto=format&fit=crop&w=600&q=70',
+      rotate: '-rotate-2',
+      translate: '-translate-y-2',
+    },
+  ];
+
+  return (
+    <div className="relative">
+      <div className="grid grid-cols-2 gap-4 sm:gap-5">
+        {tiles.map((t) => (
+          <figure
+            key={t.label}
+            className={`group relative overflow-hidden rounded-md bg-bg-muted shadow-md transition-transform duration-300 ease-editorial hover:rotate-0 hover:scale-[1.02] ${t.rotate} ${t.translate}`}
+          >
+            <div className="aspect-[4/5]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={t.url}
+                alt={t.label}
+                loading="eager"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <figcaption className="absolute left-3 top-3 rounded-full bg-bg-surface/90 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-text-primary backdrop-blur">
+              {t.label}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      {/* Soft glow behind the collage to lift it off the dark/light bg */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-accent/5 via-transparent to-accent/10 blur-3xl"
+      />
+    </div>
   );
 }

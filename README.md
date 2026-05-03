@@ -3,7 +3,7 @@
 Personal inventory + planning system for **apparel · accessories · jewelry · silver · artwork**.
 Image-first, AI-assisted intake, natural-language search, calendar/outfits, packing lists, and shareable folders.
 
-> **Status:** Phase 0–5 scaffold (Foundation + Inventory MVP web + AI hooks + Expo mobile + Calendar/Outfits + Sharing + dark mode).
+> **Status:** Phase 0–6 scaffold (Foundation + Inventory MVP web + AI hooks + Expo mobile + Calendar/Outfits + Sharing + Wishlist + Packing lists + dark mode).
 > See [build-a-modern-full-stack-buzzing-lemur.md](../../.claude/plans/build-a-modern-full-stack-buzzing-lemur.md) for the full roadmap.
 
 ---
@@ -114,6 +114,12 @@ For Supabase magic-link auth on mobile, whitelist the deep link in your project:
 | `/share/[token]`      | Public read-only viewer for a shared item or outfit            |
 | `/api/share/link`     | POST: create a share link with `view`/`edit` permission + optional expiry |
 | `/api/share/[token]/revoke` | DELETE: revoke an existing share link                    |
+| `/wishlist`           | Wishlist grid with image, price (current vs target), source link |
+| `/wishlist/add`       | Add a wishlist entry by title/URL/image/price                  |
+| `/packing`            | Trips list with packed-progress badges                         |
+| `/packing/new`        | Create a trip; calls /api/packing/suggest for weather-aware item picks |
+| `/packing/[id]`       | Packing checklist grouped by category, optimistic check-off    |
+| `/api/packing/suggest`| POST: Open-Meteo geocode + forecast + tag-weighted item picks  |
 | `/api/items/auto-fill`| Vision call → JSON of suggested fields                        |
 | `/api/search/semantic`| Embedding-based search (depends on `match_items` RPC)         |
 
@@ -187,5 +193,4 @@ JWT.
 
 ## What's next (per the plan)
 
-- **Phase 6 — wishlist & packing list flows.**
 - **Phase 7 — account export/delete + launch (TestFlight + production domain).**

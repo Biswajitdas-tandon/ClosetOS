@@ -18,7 +18,13 @@ export function SiteHeader({ user }: { user?: { email?: string | null } | null }
           <Link href="/calendar" className="transition-colors hover:text-text-primary">
             Calendar
           </Link>
-          <Link href="/library/add" className="hidden transition-colors hover:text-text-primary sm:inline">
+          <Link href="/wishlist" className="hidden transition-colors hover:text-text-primary md:inline">
+            Wishlist
+          </Link>
+          <Link href="/packing" className="hidden transition-colors hover:text-text-primary md:inline">
+            Packing
+          </Link>
+          <Link href="/library/add" className="hidden transition-colors hover:text-text-primary lg:inline">
             Add item
           </Link>
           <ThemeToggle />

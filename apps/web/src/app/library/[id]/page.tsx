@@ -5,6 +5,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { serverClient } from '@/lib/supabase-server';
 import { DEMO_ITEMS } from '@/lib/demo-data';
+import { relativeDay } from '@/lib/dates';
 
 export default async function ItemDetailPage({
   params,
@@ -108,11 +109,29 @@ export default async function ItemDetailPage({
                   value={`${item.price_currency ?? 'INR'} ${item.price_amount.toLocaleString()}`}
                 />
               ) : null}
-              {Object.entries(item.details ?? {}).map(([k, v]) =>
-                v == null || v === '' ? null : (
-                  <Field key={k} label={prettyKey(k)} value={String(v)} />
-                ),
-              )}
+              {Object.entries(item.details ?? {})
+                .filter(([k]) => k !== 'last_worn_date')
+                .map(([k, v]) =>
+                  v == null || v === '' ? null : (
+                    <Field key={k} label={prettyKey(k)} value={String(v)} />
+                  ),
+                )}
+              {(item.details as Record<string, unknown>)?.last_worn_date ? (
+                <Field
+                  label="Last worn"
+                  value={`${relativeDay(String((item.details as Record<string, unknown>).last_worn_date))}`}
+                />
+              ) : null}
+              {item.price_amount != null && (item.details as Record<string, unknown>)?.wear_count
+                ? (
+                  <Field
+                    label="Cost per wear"
+                    value={`${item.price_currency ?? 'INR'} ${(
+                      item.price_amount /
+                      Number((item.details as Record<string, unknown>).wear_count)
+                    ).toFixed(0)}`}
+                  />
+                ) : null}
             </dl>
 
             {item.notes ? (

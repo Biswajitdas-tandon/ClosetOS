@@ -7,11 +7,17 @@ export function SiteHeader({ user }: { user?: { email?: string | null } | null }
         <Link href="/" className="font-display text-xl font-medium tracking-tight">
           ClosetOS
         </Link>
-        <nav className="flex items-center gap-6 text-sm text-text-secondary">
+        <nav className="flex items-center gap-5 whitespace-nowrap text-sm text-text-secondary">
           <Link href="/library" className="transition-colors hover:text-text-primary">
             Library
           </Link>
-          <Link href="/library/add" className="transition-colors hover:text-text-primary">
+          <Link href="/outfits" className="transition-colors hover:text-text-primary">
+            Outfits
+          </Link>
+          <Link href="/calendar" className="transition-colors hover:text-text-primary">
+            Calendar
+          </Link>
+          <Link href="/library/add" className="hidden transition-colors hover:text-text-primary sm:inline">
             Add item
           </Link>
           {user ? (

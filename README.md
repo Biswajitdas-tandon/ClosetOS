@@ -3,7 +3,7 @@
 Personal inventory + planning system for **apparel · accessories · jewelry · silver · artwork**.
 Image-first, AI-assisted intake, natural-language search, calendar/outfits, packing lists, and shareable folders.
 
-> **Status:** Phase 0–3 scaffold (Foundation + Inventory MVP web + AI hooks + Expo mobile).
+> **Status:** Phase 0–4 scaffold (Foundation + Inventory MVP web + AI hooks + Expo mobile + Calendar/Outfits).
 > See [build-a-modern-full-stack-buzzing-lemur.md](../../.claude/plans/build-a-modern-full-stack-buzzing-lemur.md) for the full roadmap.
 
 ---
@@ -105,7 +105,12 @@ For Supabase magic-link auth on mobile, whitelist the deep link in your project:
 | `/auth/callback`      | OAuth/PKCE callback that exchanges code for session           |
 | `/library`            | Filterable, searchable item grid (category chips, tsvector)   |
 | `/library/add`        | Multi-step add: photo → AI auto-fill → confirm → save         |
-| `/library/[id]`       | Detail view with structured fields                            |
+| `/library/[id]`       | Detail view with structured fields + last-worn + cost-per-wear |
+| `/outfits`            | Saved outfits grid                                             |
+| `/outfits/new`        | Outfit composer (multi-pick items grouped by category, optional date logs to calendar) |
+| `/outfits/[id]`       | Outfit detail (linked items, occasion, date)                   |
+| `/calendar`           | Month grid with outfit pills per date, prev/next navigation    |
+| `/calendar/[date]`    | Day view: log/list outfits for that date                       |
 | `/api/items/auto-fill`| Vision call → JSON of suggested fields                        |
 | `/api/search/semantic`| Embedding-based search (depends on `match_items` RPC)         |
 
@@ -171,8 +176,6 @@ JWT.
 
 ## What's next (per the plan)
 
-- **Phase 4 — calendar & outfits UI.** Schema + trigger are in place;
-  needs frontend on web + mobile.
 - **Phase 5 — sharing UI.** `shared_access` table is ready.
 - **Phase 6 — wishlist & packing list flows.**
 - **Phase 7 — account export/delete + launch (TestFlight + production domain).**

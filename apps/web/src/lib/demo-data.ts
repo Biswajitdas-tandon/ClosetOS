@@ -21,8 +21,9 @@ export const DEMO_ITEMS: DemoItem[] = [
     brand: 'Uniqlo',
     colour: 'White',
     status: 'available',
+    // Verified: "white shirt laying on top of a white table"
     imageUrl:
-      'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=70',
+      'https://images.unsplash.com/photo-1693048737398-c63e70f27da0?auto=format&fit=crop&w=900&q=70',
     price: 2999,
   },
   {
@@ -43,8 +44,9 @@ export const DEMO_ITEMS: DemoItem[] = [
     brand: 'Hidesign',
     colour: 'Tan',
     status: 'available',
+    // Verified: "brown leather belt on white textile"
     imageUrl:
-      'https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&w=900&q=70',
+      'https://images.unsplash.com/photo-1586232710888-675866d80ad2?auto=format&fit=crop&w=900&q=70',
     price: 3500,
   },
   {
@@ -65,20 +67,22 @@ export const DEMO_ITEMS: DemoItem[] = [
     brand: 'P. Orr & Sons',
     colour: 'Silver',
     status: 'available',
+    // Verified: "a tray with a silver tea pot and two cups on it"
     imageUrl:
-      'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&w=900&q=70',
+      'https://images.unsplash.com/photo-1642582431503-5276a6b9798d?auto=format&fit=crop&w=900&q=70',
     price: 65000,
   },
   {
     id: 'd6',
     category: 'artwork',
-    title: 'Untitled (Bombay, 1972)',
-    brand: 'M. F. Husain',
-    colour: 'Multi',
+    title: 'Pine Forest Landscape',
+    brand: 'Royal Academy',
+    colour: 'Earth',
     status: 'available',
+    // Verified: "Brown wooden framed painting of green and brown tree"
     imageUrl:
-      'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?auto=format&fit=crop&w=900&q=70',
-    price: 1250000,
+      'https://images.unsplash.com/photo-1605845872108-b733db1f2663?auto=format&fit=crop&w=900&q=70',
+    price: 850000,
     details: { medium: 'Oil on canvas', condition: 'excellent' },
   },
   {
@@ -88,8 +92,9 @@ export const DEMO_ITEMS: DemoItem[] = [
     brand: 'Raw Mango',
     colour: 'Indigo',
     status: 'lent',
+    // Verified: "Woman in blue and gold sari"
     imageUrl:
-      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=70',
+      'https://images.unsplash.com/photo-1614881064213-180b1c28f743?auto=format&fit=crop&w=900&q=70',
     price: 32000,
   },
   {

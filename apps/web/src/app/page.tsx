@@ -149,32 +149,34 @@ function SiteFooter() {
 // Layered hero image collage — one photo per category, arranged with subtle
 // rotation and offset so they overlap like polaroids on a moodboard.
 function HeroCollage() {
+  // Hero photos are intentionally DIFFERENT from the demo grid below so the
+  // visitor's eye doesn't see the same image twice on one page.
   const tiles: { label: string; url: string; rotate: string; translate: string }[] = [
     {
       label: 'Apparel',
-      // Camel coat (verified earlier for d2)
-      url: 'https://images.unsplash.com/photo-1777448067392-235aec6a10e4?auto=format&fit=crop&w=600&q=70',
+      // Verified: "Woman wearing a white linen shirt" — editorial lifestyle
+      url: 'https://images.unsplash.com/photo-1752825609278-f9696bc9d7bd?auto=format&fit=crop&w=600&q=70',
       rotate: '-rotate-3',
       translate: 'translate-y-2',
     },
     {
       label: 'Jewelry',
-      // Diamond solitaire (verified earlier for d4)
-      url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=600&q=70',
+      // Verified: "silver diamond studded ring on black textile" — moody studio
+      url: 'https://images.unsplash.com/photo-1607703829739-c05b7beddf60?auto=format&fit=crop&w=600&q=70',
       rotate: 'rotate-2',
       translate: '-translate-y-3',
     },
     {
       label: 'Silver',
-      // Verified: "a tray with a silver tea pot and two cups on it"
-      url: 'https://images.unsplash.com/photo-1642582431503-5276a6b9798d?auto=format&fit=crop&w=600&q=70',
+      // Verified: "Ornate silver coffee pot and cup on display"
+      url: 'https://images.unsplash.com/photo-1764861127777-a4022156402c?auto=format&fit=crop&w=600&q=70',
       rotate: 'rotate-1',
       translate: 'translate-y-1',
     },
     {
       label: 'Artwork',
-      // Painting (existing d6)
-      url: 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?auto=format&fit=crop&w=600&q=70',
+      // Verified: "Two framed classical paintings hanging on a wall"
+      url: 'https://images.unsplash.com/photo-1769690398960-3c8ede7ae905?auto=format&fit=crop&w=600&q=70',
       rotate: '-rotate-2',
       translate: '-translate-y-2',
     },

@@ -5,6 +5,7 @@ export type ItemCardProps = {
   title: string;
   subtitle?: string;
   imageUrl?: string;
+  /** @deprecated kept for back-compat; no longer rendered. */
   badge?: string;
   status?: 'available' | 'lent' | 'given_away' | 'sold';
   onClick?: () => void;
@@ -17,7 +18,7 @@ const STATUS_DOT: Record<NonNullable<ItemCardProps['status']>, string> = {
   sold: 'bg-status-sold',
 };
 
-export function ItemCard({ title, subtitle, imageUrl, badge, status = 'available', onClick }: ItemCardProps) {
+export function ItemCard({ title, subtitle, imageUrl, status = 'available', onClick }: ItemCardProps) {
   return (
     <button
       onClick={onClick}
@@ -37,11 +38,6 @@ export function ItemCard({ title, subtitle, imageUrl, badge, status = 'available
             <span className="text-sm">No image</span>
           </div>
         )}
-        {badge ? (
-          <span className="absolute left-3 top-3 rounded-full bg-bg-surface/90 px-2.5 py-1 text-xs font-medium text-text-primary backdrop-blur">
-            {badge}
-          </span>
-        ) : null}
       </div>
       <div className="flex items-center justify-between gap-2 px-3 py-2.5">
         <div className="min-w-0 flex-1">

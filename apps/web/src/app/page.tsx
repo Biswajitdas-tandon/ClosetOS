@@ -140,8 +140,25 @@ function FeatureGrid() {
 
 function SiteFooter() {
   return (
-    <footer className="border-t border-border-subtle py-10 text-center text-xs text-text-muted">
-      ClosetOS · early build · {new Date().getFullYear()}
+    <footer className="border-t border-border-subtle py-8">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 text-xs text-text-muted sm:flex-row">
+        <span>ClosetOS · {new Date().getFullYear()}</span>
+        <a
+          href="#"
+          className="flex items-center gap-2 text-text-muted transition-colors hover:text-text-primary"
+          aria-label="IT Squared"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/itsquared-logo.png"
+            alt="IT Squared"
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded object-contain"
+          />
+          <span className="font-medium tracking-wide">IT Squared</span>
+        </a>
+      </div>
     </footer>
   );
 }

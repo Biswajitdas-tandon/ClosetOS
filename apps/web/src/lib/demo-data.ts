@@ -28,13 +28,13 @@ export const DEMO_ITEMS: DemoItem[] = [
   {
     id: 'd2',
     category: 'apparel',
-    title: 'Wool Overcoat',
-    brand: 'COS',
+    title: 'Camel Trench Coat',
+    brand: 'Massimo Dutti',
     colour: 'Camel',
     status: 'available',
     imageUrl:
-      'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=900&q=70',
-    price: 18900,
+      'https://images.unsplash.com/photo-1777448067392-235aec6a10e4?auto=format&fit=crop&w=900&q=70',
+    price: 15500,
   },
   {
     id: 'd3',
@@ -50,13 +50,13 @@ export const DEMO_ITEMS: DemoItem[] = [
   {
     id: 'd4',
     category: 'jewelry',
-    title: 'Pearl Studs',
+    title: 'Diamond Solitaire Ring',
     brand: 'Tanishq',
-    colour: 'Cream',
+    colour: 'Silver',
     status: 'available',
     imageUrl:
-      'https://images.unsplash.com/photo-1535632787350-4e68ef0ac584?auto=format&fit=crop&w=900&q=70',
-    price: 24500,
+      'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=900&q=70',
+    price: 185000,
   },
   {
     id: 'd5',
@@ -95,12 +95,12 @@ export const DEMO_ITEMS: DemoItem[] = [
   {
     id: 'd8',
     category: 'accessory',
-    title: 'Aviators',
-    brand: 'Ray-Ban',
-    colour: 'Gold',
+    title: 'Cashmere Scarf',
+    brand: 'Loro Piana',
+    colour: 'Charcoal',
     status: 'available',
     imageUrl:
-      'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=900&q=70',
-    price: 9500,
+      'https://images.unsplash.com/photo-1603906650843-b58e94d9df4d?auto=format&fit=crop&w=900&q=70',
+    price: 42000,
   },
 ];

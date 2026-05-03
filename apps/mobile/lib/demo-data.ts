@@ -17,7 +17,7 @@ export const DEMO_ITEMS: DemoItem[] = [
   {
     id: 'd1', category: 'apparel', title: 'Linen Shirt', brand: 'Uniqlo',
     colour: 'White', status: 'available', price: 2999,
-    imageUrl: 'https://images.unsplash.com/photo-1693048737398-c63e70f27da0?auto=format&fit=crop&w=900&q=70',
+    imageUrl: 'https://images.unsplash.com/photo-1609369350331-4f12b446d487?auto=format&fit=crop&w=900&q=70',
   },
   {
     id: 'd2', category: 'apparel', title: 'Camel Trench Coat', brand: 'Massimo Dutti',
@@ -47,7 +47,7 @@ export const DEMO_ITEMS: DemoItem[] = [
   {
     id: 'd7', category: 'apparel', title: 'Silk Saree', brand: 'Raw Mango',
     colour: 'Indigo', status: 'lent', price: 32000,
-    imageUrl: 'https://images.unsplash.com/photo-1614881064213-180b1c28f743?auto=format&fit=crop&w=900&q=70',
+    imageUrl: 'https://images.unsplash.com/photo-1758985402758-ac52f206518c?auto=format&fit=crop&w=900&q=70',
   },
   {
     id: 'd8', category: 'accessory', title: 'Cashmere Scarf', brand: 'Loro Piana',

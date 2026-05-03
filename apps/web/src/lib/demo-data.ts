@@ -21,9 +21,9 @@ export const DEMO_ITEMS: DemoItem[] = [
     brand: 'Uniqlo',
     colour: 'White',
     status: 'available',
-    // Verified: "white shirt laying on top of a white table"
+    // Verified: "Woman in white button-up holding her hair — editorial portrait"
     imageUrl:
-      'https://images.unsplash.com/photo-1693048737398-c63e70f27da0?auto=format&fit=crop&w=900&q=70',
+      'https://images.unsplash.com/photo-1609369350331-4f12b446d487?auto=format&fit=crop&w=900&q=70',
     price: 2999,
   },
   {
@@ -92,9 +92,9 @@ export const DEMO_ITEMS: DemoItem[] = [
     brand: 'Raw Mango',
     colour: 'Indigo',
     status: 'lent',
-    // Verified: "Woman in blue and gold sari"
+    // Verified: "Woman in purple sari with traditional jewelry — editorial"
     imageUrl:
-      'https://images.unsplash.com/photo-1614881064213-180b1c28f743?auto=format&fit=crop&w=900&q=70',
+      'https://images.unsplash.com/photo-1758985402758-ac52f206518c?auto=format&fit=crop&w=900&q=70',
     price: 32000,
   },
   {

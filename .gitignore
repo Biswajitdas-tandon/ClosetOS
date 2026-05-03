@@ -16,3 +16,4 @@ supabase/.temp
 apps/mobile/.expo
 ios/build
 android/build
+apps/web/tsconfig.tsbuildinfo

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CATEGORIES, CATEGORY_LABEL, type Category } from '@closetos/domain';
@@ -16,6 +16,26 @@ type LibItem = {
 };
 
 export default function NewOutfitPage() {
+  // useSearchParams must be inside a Suspense boundary for Next.js 15 prerender.
+  return (
+    <Suspense fallback={<NewOutfitFallback />}>
+      <NewOutfitForm />
+    </Suspense>
+  );
+}
+
+function NewOutfitFallback() {
+  return (
+    <div className="min-h-screen">
+      <SiteHeader />
+      <main className="mx-auto max-w-2xl px-6 py-10">
+        <div className="h-8 w-40 animate-pulse rounded bg-bg-muted" />
+      </main>
+    </div>
+  );
+}
+
+function NewOutfitForm() {
   const router = useRouter();
   const params = useSearchParams();
   const dateParam = params.get('date') ?? '';

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["pnpm@10.33.2", "--filter", "@closetos/web", "dev"],
+      "port": 3000
+    }
+  ]
+}

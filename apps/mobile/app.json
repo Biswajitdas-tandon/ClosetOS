@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "ClosetOS",
+    "slug": "closetos",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "closetos",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.closetos.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "ClosetOS uses the camera so you can photograph items as you add them.",
+        "NSPhotoLibraryUsageDescription": "ClosetOS reads from your photo library so you can choose images for items."
+      }
+    },
+    "android": {
+      "package": "com.closetos.app",
+      "permissions": ["CAMERA", "READ_MEDIA_IMAGES"]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-image-picker"
+    ],
+    "extra": {
+      "router": { "origin": false }
+    },
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

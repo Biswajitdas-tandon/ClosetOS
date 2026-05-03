@@ -1,0 +1,6 @@
+apps/mobile
+supabase
+scripts
+.expo-bundle-test
+*.md
+!apps/web/**/*.md

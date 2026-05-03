@@ -4,13 +4,22 @@ import { CATEGORY_LABEL } from '@closetos/domain';
 import { SiteHeader } from '@/components/SiteHeader';
 import { DEMO_ITEMS } from '@/lib/demo-data';
 import { isSupabaseConfigured } from '@/lib/supabase';
+import { serverClient } from '@/lib/supabase-server';
 
-export default function HomePage() {
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
   const configured = isSupabaseConfigured();
+  let user: { email?: string | null } | null = null;
+  if (configured) {
+    const supabase = await serverClient();
+    const { data } = await supabase.auth.getUser();
+    if (data.user) user = { email: data.user.email };
+  }
 
   return (
     <div className="min-h-screen">
-      <SiteHeader />
+      <SiteHeader user={user} />
       <main>
         <section className="mx-auto max-w-7xl px-6 pb-16 pt-20 md:pt-28">
           <div className="max-w-3xl">

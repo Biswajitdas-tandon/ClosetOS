@@ -29,7 +29,9 @@ export function SiteHeader({ user }: { user?: { email?: string | null } | null }
           </Link>
           <ThemeToggle />
           {user ? (
-            <span className="text-text-muted">{user.email}</span>
+            <Link href="/account" className="text-text-muted hover:text-text-primary">
+              {user.email}
+            </Link>
           ) : (
             <Link
               href="/login"

@@ -3,7 +3,7 @@
 Personal inventory + planning system for **apparel · accessories · jewelry · silver · artwork**.
 Image-first, AI-assisted intake, natural-language search, calendar/outfits, packing lists, and shareable folders.
 
-> **Status:** Phase 0–6 scaffold (Foundation + Inventory MVP web + AI hooks + Expo mobile + Calendar/Outfits + Sharing + Wishlist + Packing lists + dark mode).
+> **Status:** Phase 0–7 scaffold — feature-complete v1. Web is launch-ready; mobile builds clean and ships via EAS. See [LAUNCH.md](LAUNCH.md) for the go-live checklist.
 > See [build-a-modern-full-stack-buzzing-lemur.md](../../.claude/plans/build-a-modern-full-stack-buzzing-lemur.md) for the full roadmap.
 
 ---
@@ -120,6 +120,10 @@ For Supabase magic-link auth on mobile, whitelist the deep link in your project:
 | `/packing/new`        | Create a trip; calls /api/packing/suggest for weather-aware item picks |
 | `/packing/[id]`       | Packing checklist grouped by category, optimistic check-off    |
 | `/api/packing/suggest`| POST: Open-Meteo geocode + forecast + tag-weighted item picks  |
+| `/account`            | Settings: data stats + export (.zip) + delete account (danger zone) |
+| `/onboarding`         | First-run flow: 4 steps, auto-shown on initial sign-in         |
+| `/api/account/export` | GET: streams a ZIP of all rows + media originals (GDPR/DPDP)   |
+| `/api/account`        | DELETE: purges Storage + auth user (cascades through all tables) |
 | `/api/items/auto-fill`| Vision call → JSON of suggested fields                        |
 | `/api/search/semantic`| Embedding-based search (depends on `match_items` RPC)         |
 
@@ -191,6 +195,18 @@ JWT.
 
 ---
 
-## What's next (per the plan)
+## Launch
 
-- **Phase 7 — account export/delete + launch (TestFlight + production domain).**
+The full go-live runbook is in [LAUNCH.md](LAUNCH.md). TL;DR:
+
+- **Web** → `./scripts/deploy.sh` (Vercel CLI). Custom domain in Vercel dashboard.
+- **Mobile** → `eas build --profile preview` then `eas submit` for TestFlight + Play Internal.
+- **Privacy** → `/api/account/export` returns a ZIP of everything; `/api/account` (DELETE) hard-deletes the user and storage. Both are wired into `/account`.
+
+## Beyond v1 (nice-to-haves)
+
+- Outfit recommendations & style analytics (cost-per-wear leaderboard, most-worn items)
+- AI stylist suggestions (LLM picks an outfit for an event)
+- Barcode / bill scanning during intake
+- Folder sharing in `/share/[token]` (currently item + outfit only)
+- Mobile dark mode (web is wired; native uses Appearance API + same tokens — straightforward follow-up)

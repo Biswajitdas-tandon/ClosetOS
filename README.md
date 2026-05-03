@@ -3,7 +3,7 @@
 Personal inventory + planning system for **apparel · accessories · jewelry · silver · artwork**.
 Image-first, AI-assisted intake, natural-language search, calendar/outfits, packing lists, and shareable folders.
 
-> **Status:** Phase 0–4 scaffold (Foundation + Inventory MVP web + AI hooks + Expo mobile + Calendar/Outfits).
+> **Status:** Phase 0–5 scaffold (Foundation + Inventory MVP web + AI hooks + Expo mobile + Calendar/Outfits + Sharing + dark mode).
 > See [build-a-modern-full-stack-buzzing-lemur.md](../../.claude/plans/build-a-modern-full-stack-buzzing-lemur.md) for the full roadmap.
 
 ---
@@ -111,6 +111,9 @@ For Supabase magic-link auth on mobile, whitelist the deep link in your project:
 | `/outfits/[id]`       | Outfit detail (linked items, occasion, date)                   |
 | `/calendar`           | Month grid with outfit pills per date, prev/next navigation    |
 | `/calendar/[date]`    | Day view: log/list outfits for that date                       |
+| `/share/[token]`      | Public read-only viewer for a shared item or outfit            |
+| `/api/share/link`     | POST: create a share link with `view`/`edit` permission + optional expiry |
+| `/api/share/[token]/revoke` | DELETE: revoke an existing share link                    |
 | `/api/items/auto-fill`| Vision call → JSON of suggested fields                        |
 | `/api/search/semantic`| Embedding-based search (depends on `match_items` RPC)         |
 
@@ -174,8 +177,15 @@ JWT.
 
 ---
 
+## Theming
+
+- Light + dark themes via CSS variables ([apps/web/src/app/globals.css](apps/web/src/app/globals.css)).
+- Tailwind utility classes (`bg-bg-base`, `text-text-primary`, etc.) resolve to vars and flip on `:root[data-theme="dark"]`.
+- [`<ThemeToggle/>`](apps/web/src/components/ThemeToggle.tsx) cycles `light → dark → system`. Preference persists in `localStorage` and a no-FOUC bootstrap script in [layout.tsx](apps/web/src/app/layout.tsx) sets the theme before paint.
+
+---
+
 ## What's next (per the plan)
 
-- **Phase 5 — sharing UI.** `shared_access` table is ready.
 - **Phase 6 — wishlist & packing list flows.**
 - **Phase 7 — account export/delete + launch (TestFlight + production domain).**

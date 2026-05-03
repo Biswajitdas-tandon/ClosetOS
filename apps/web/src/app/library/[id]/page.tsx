@@ -6,6 +6,7 @@ import { isSupabaseConfigured } from '@/lib/supabase';
 import { serverClient } from '@/lib/supabase-server';
 import { DEMO_ITEMS } from '@/lib/demo-data';
 import { relativeDay } from '@/lib/dates';
+import { ShareButton } from '@/components/ShareModal';
 
 export default async function ItemDetailPage({
   params,
@@ -91,13 +92,18 @@ export default async function ItemDetailPage({
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-text-muted">
-              {CATEGORY_LABEL[item.category]}
-            </p>
-            <h1 className="mt-2 font-display text-4xl tracking-tight">{item.title}</h1>
-            {item.brand ? (
-              <p className="mt-1 text-base text-text-secondary">{item.brand}</p>
-            ) : null}
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-text-muted">
+                  {CATEGORY_LABEL[item.category]}
+                </p>
+                <h1 className="mt-2 font-display text-4xl tracking-tight">{item.title}</h1>
+                {item.brand ? (
+                  <p className="mt-1 text-base text-text-secondary">{item.brand}</p>
+                ) : null}
+              </div>
+              {item.id.length === 36 ? <ShareButton resourceType="item" resourceId={item.id} /> : null}
+            </div>
 
             <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-border-subtle pt-6 text-sm">
               <Field label="Status" value={STATUS_LABEL[item.status]} />

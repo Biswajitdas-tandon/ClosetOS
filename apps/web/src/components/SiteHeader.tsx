@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ThemeToggle } from './ThemeToggle';
 
 export function SiteHeader({ user }: { user?: { email?: string | null } | null }) {
   return (
@@ -20,6 +21,7 @@ export function SiteHeader({ user }: { user?: { email?: string | null } | null }
           <Link href="/library/add" className="hidden transition-colors hover:text-text-primary sm:inline">
             Add item
           </Link>
+          <ThemeToggle />
           {user ? (
             <span className="text-text-muted">{user.email}</span>
           ) : (

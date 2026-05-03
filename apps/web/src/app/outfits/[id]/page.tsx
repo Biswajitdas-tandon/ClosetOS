@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { CATEGORY_LABEL, type Category } from '@closetos/domain';
 import { SiteHeader } from '@/components/SiteHeader';
+import { ShareButton } from '@/components/ShareModal';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { serverClient } from '@/lib/supabase-server';
 
@@ -49,12 +50,17 @@ export default async function OutfitDetail({
           ← All outfits
         </Link>
 
-        <h1 className="font-display text-4xl tracking-tight">
-          {o.name ?? 'Untitled outfit'}
-        </h1>
-        <p className="mt-1 text-sm text-text-secondary">
-          {[o.occasion, o.event_date].filter(Boolean).join(' · ') || 'No date set'}
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="font-display text-4xl tracking-tight">
+              {o.name ?? 'Untitled outfit'}
+            </h1>
+            <p className="mt-1 text-sm text-text-secondary">
+              {[o.occasion, o.event_date].filter(Boolean).join(' · ') || 'No date set'}
+            </p>
+          </div>
+          <ShareButton resourceType="outfit" resourceId={o.id} />
+        </div>
 
         {o.notes ? (
           <p className="mt-6 max-w-2xl whitespace-pre-wrap text-sm leading-relaxed text-text-secondary">

@@ -6,10 +6,23 @@ export const metadata: Metadata = {
   description: 'A premium personal inventory system for apparel, accessories, jewelry, silver, and artwork.',
 };
 
+// Set theme on <html> before paint to avoid flash of wrong colours.
+const themeBootstrap = `
+  (function(){
+    try {
+      var p = localStorage.getItem('theme') || 'system';
+      var dark = p === 'dark' || (p === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      if (p !== 'system') document.documentElement.dataset.themePref = p;
+    } catch (e) {}
+  })();
+`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link

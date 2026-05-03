@@ -3,17 +3,67 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Light theme (default) */
+    --bg-base: #FAFAF7;
+    --bg-surface: #FFFFFF;
+    --bg-muted: #F4F2EE;
+    --bg-inverse: #111111;
+
+    --text-primary: #111111;
+    --text-secondary: #525252;
+    --text-muted: #8A8780;
+    --text-inverse: #FAFAF7;
+    --text-on-accent: #FFFFFF;
+
+    --border-subtle: #EAE7E0;
+    --border-strong: #1F2937;
+
+    --accent: #1F2937;
+    --accent-hover: #0F172A;
+
+    --status-available: #16A34A;
+    --status-lent: #D97706;
+    --status-given-away: #737373;
+    --status-sold: #DC2626;
+  }
+
+  :root[data-theme="dark"] {
+    --bg-base: #0E0E0C;
+    --bg-surface: #161614;
+    --bg-muted: #1F1E1B;
+    --bg-inverse: #FAFAF7;
+
+    --text-primary: #F4F2EE;
+    --text-secondary: #B4B0A8;
+    --text-muted: #7A7770;
+    --text-inverse: #111111;
+    --text-on-accent: #0E0E0C;
+
+    --border-subtle: #2A2823;
+    --border-strong: #F4F2EE;
+
+    --accent: #F4F2EE;
+    --accent-hover: #FFFFFF;
+
+    --status-available: #22C55E;
+    --status-lent: #FBBF24;
+    --status-given-away: #A3A3A3;
+    --status-sold: #F87171;
+  }
+
   html, body {
     height: 100%;
-    background-color: theme('colors.bg.base');
-    color: theme('colors.text.primary');
+    background-color: var(--bg-base);
+    color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
+    transition: background-color 220ms ease, color 220ms ease;
   }
   body {
     font-family: theme('fontFamily.sans');
   }
   ::selection {
-    background-color: theme('colors.accent.DEFAULT');
-    color: theme('colors.text.onAccent');
+    background-color: var(--accent);
+    color: var(--text-on-accent);
   }
 }

@@ -1,16 +1,40 @@
 import { tokens } from './tokens';
 
-// Typed loosely so this package doesn't need tailwindcss as a dep.
-// The consuming app casts the preset back to a Tailwind Config.
+// Tailwind preset that uses CSS variables so the same class
+// (e.g. `bg-bg-base`) renders correctly in both light and dark mode.
+// The actual var values are set in apps/web/src/app/globals.css.
 export const tailwindPreset = {
+  darkMode: ['class', '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
-        bg: tokens.color.bg,
-        text: tokens.color.text,
-        border: tokens.color.border,
-        accent: tokens.color.accent,
-        status: tokens.color.status,
+        bg: {
+          base: 'var(--bg-base)',
+          surface: 'var(--bg-surface)',
+          muted: 'var(--bg-muted)',
+          inverse: 'var(--bg-inverse)',
+        },
+        text: {
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
+          inverse: 'var(--text-inverse)',
+          onAccent: 'var(--text-on-accent)',
+        },
+        border: {
+          subtle: 'var(--border-subtle)',
+          strong: 'var(--border-strong)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
+        },
+        status: {
+          available: 'var(--status-available)',
+          lent: 'var(--status-lent)',
+          given_away: 'var(--status-given-away)',
+          sold: 'var(--status-sold)',
+        },
       },
       borderRadius: {
         sm: tokens.radius.sm,

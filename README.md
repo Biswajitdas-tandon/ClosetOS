@@ -3,8 +3,9 @@
 Personal inventory + planning system for **apparel · accessories · jewelry · silver · artwork**.
 Image-first manual intake, full-text search, calendar/outfits, packing lists, and shareable folders.
 
+> **Repo:** https://github.com/Biswajitdas-tandon/ClosetOS · **Live:** https://closetos-iota.vercel.app
 > **Status:** Phase 0–7 scaffold — feature-complete v1. Web is launch-ready; mobile builds clean and ships via EAS. See [LAUNCH.md](LAUNCH.md) for the go-live checklist.
-> See [build-a-modern-full-stack-buzzing-lemur.md](../../.claude/plans/build-a-modern-full-stack-buzzing-lemur.md) for the full roadmap.
+> Every push to `main` auto-deploys to production via Vercel. See [build-a-modern-full-stack-buzzing-lemur.md](../../.claude/plans/build-a-modern-full-stack-buzzing-lemur.md) for the full roadmap.
 
 ---
 

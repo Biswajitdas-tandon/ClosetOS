@@ -22,7 +22,6 @@ export default function AddItemPage() {
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [autofilling, setAutofilling] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fields = useMemo(() => FIELDS_BY_CATEGORY[category], [category]);
@@ -36,27 +35,6 @@ export default function AddItemPage() {
     if (!f) return;
     setPhoto(f);
     setPreview(URL.createObjectURL(f));
-  }
-
-  async function tryAutoFill() {
-    if (!photo) return;
-    setAutofilling(true);
-    setError(null);
-    try {
-      const fd = new FormData();
-      fd.append('image', photo);
-      const res = await fetch('/api/items/auto-fill', { method: 'POST', body: fd });
-      if (!res.ok) throw new Error(`Auto-fill failed (${res.status})`);
-      const json = (await res.json()) as Record<string, string | number | undefined>;
-      if (json.category && (CATEGORIES as readonly string[]).includes(json.category as string)) {
-        setCategory(json.category as Category);
-      }
-      setValues((v) => ({ ...v, ...json }));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Auto-fill unavailable');
-    } finally {
-      setAutofilling(false);
-    }
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -114,7 +92,7 @@ export default function AddItemPage() {
           <div>
             <h1 className="font-display text-3xl">Add an item</h1>
             <p className="mt-1 text-sm text-text-secondary">
-              Drop a photo. AI fills the rest. You confirm and save.
+              Add a photo, fill in the details, save.
             </p>
           </div>
           <Link href="/library" className="text-sm text-text-secondary hover:text-text-primary">
@@ -143,36 +121,26 @@ export default function AddItemPage() {
               )}
             </label>
 
-            <div className="flex flex-col justify-between">
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-text-secondary">
-                  Category
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {CATEGORIES.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => setCategory(c)}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                        category === c
-                          ? 'border-accent bg-accent text-text-onAccent'
-                          : 'border-border-subtle bg-bg-surface text-text-secondary hover:border-border-strong'
-                      }`}
-                    >
-                      {CATEGORY_LABEL[c]}
-                    </button>
-                  ))}
-                </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-text-secondary">
+                Category
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setCategory(c)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                      category === c
+                        ? 'border-accent bg-accent text-text-onAccent'
+                        : 'border-border-subtle bg-bg-surface text-text-secondary hover:border-border-strong'
+                    }`}
+                  >
+                    {CATEGORY_LABEL[c]}
+                  </button>
+                ))}
               </div>
-              <button
-                type="button"
-                onClick={tryAutoFill}
-                disabled={!photo || autofilling}
-                className="mt-6 rounded-md border border-border-strong px-4 py-2 text-sm font-medium transition-colors hover:bg-bg-muted disabled:opacity-50"
-              >
-                {autofilling ? 'Reading photo…' : '✨ Auto-fill from photo'}
-              </button>
             </div>
           </section>
 

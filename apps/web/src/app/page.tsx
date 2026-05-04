@@ -33,9 +33,9 @@ export default async function HomePage() {
                 <span className="text-text-secondary"> in one calm place.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-                Snap a photo. AI fills in the details. Search by colour, occasion, or
-                the last time you wore it. Plan outfits. Pack for trips. Share folders
-                with the people you trust.
+                Add a photo, fill in the details, and find anything by colour,
+                occasion, or the last time you wore it. Plan outfits. Pack for trips.
+                Share folders with the people you trust.
               </p>
               <div className="mt-10 flex flex-wrap items-center gap-3">
                 <Link
@@ -95,12 +95,12 @@ export default async function HomePage() {
 function FeatureGrid() {
   const features = [
     {
-      title: 'AI photo intake',
-      body: 'Drop a photo. We auto-detect type, colour, pattern, and brand — you confirm in two taps.',
+      title: 'Photo-first intake',
+      body: 'Add a photo, type the details, and save. Apparel, jewelry, silver, art — one form, the right fields per category.',
     },
     {
-      title: 'Natural-language search',
-      body: '“Black shirts I wore last winter” returns exactly that, ranked by recency.',
+      title: 'Fast full-text search',
+      body: 'Search across title, brand, colour, material, and notes. Filter by category, status, or folder.',
     },
     {
       title: 'Outfit calendar',

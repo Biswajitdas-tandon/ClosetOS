@@ -1,7 +1,7 @@
 # ClosetOS
 
 Personal inventory + planning system for **apparel · accessories · jewelry · silver · artwork**.
-Image-first, AI-assisted intake, natural-language search, calendar/outfits, packing lists, and shareable folders.
+Image-first manual intake, full-text search, calendar/outfits, packing lists, and shareable folders.
 
 > **Status:** Phase 0–7 scaffold — feature-complete v1. Web is launch-ready; mobile builds clean and ships via EAS. See [LAUNCH.md](LAUNCH.md) for the go-live checklist.
 > See [build-a-modern-full-stack-buzzing-lemur.md](../../.claude/plans/build-a-modern-full-stack-buzzing-lemur.md) for the full roadmap.
@@ -12,8 +12,7 @@ Image-first, AI-assisted intake, natural-language search, calendar/outfits, pack
 
 - **Web:** Next.js 15 (App Router, Turbopack, RSC) · Tailwind CSS · shadcn-style primitives in `@closetos/ui`
 - **Mobile:** Expo SDK 52 + Expo Router · React Native 0.76 (New Architecture) · expo-camera, expo-image-picker, expo-image
-- **Backend:** Supabase (Postgres + RLS + Auth + Storage) with `pgvector`
-- **AI:** OpenAI Vision (auto-fill) + `text-embedding-3-small` (semantic search)
+- **Backend:** Supabase (Postgres + RLS + Auth + Storage)
 - **Domain:** Zod schemas in `@closetos/domain` shared across web/edge/mobile
 - **Monorepo:** pnpm workspaces + Turborepo
 
@@ -27,8 +26,8 @@ ClosetOS/
 │   ├── db/                      # Supabase client (browser + server) + DB types
 │   └── ui/                      # design tokens + primitives (ItemCard, FilterChip, EmptyState)
 ├── supabase/
-│   ├── migrations/              # 0001_init.sql, 0002_match_items_rpc.sql
-│   └── functions/               # embed-item, process-image (Deno edge functions)
+│   ├── migrations/              # 0001_init.sql, 0002_match_items_rpc.sql, 0003_drop_ai.sql
+│   └── functions/               # process-image (Deno edge function)
 └── turbo.json · pnpm-workspace.yaml · .npmrc (node-linker=hoisted, required for RN/Expo)
 ```
 
@@ -44,7 +43,7 @@ pnpm --filter @closetos/web dev    # http://localhost:3000
 
 The home page works in **demo mode** without any Supabase config — useful while exploring the UI.
 
-To enable real persistence + auth + AI:
+To enable real persistence + auth:
 
 1. **Create a Supabase project** at https://supabase.com (free tier is fine).
 2. Copy `.env.example` → `apps/web/.env.local` and fill in the values from
@@ -53,11 +52,11 @@ To enable real persistence + auth + AI:
    NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=...
    SUPABASE_SERVICE_ROLE_KEY=...
-   OPENAI_API_KEY=sk-...
    ```
 3. **Run the migrations** (one-time):
    - Hosted: open the SQL editor in the Supabase dashboard and paste
-     `supabase/migrations/0001_init.sql`, then `0002_match_items_rpc.sql`.
+     `supabase/migrations/0001_init.sql`, then `0002_match_items_rpc.sql`,
+     then `0003_drop_ai.sql`.
    - Local: `pnpm db:start && pnpm db:reset` (requires the Supabase CLI).
 4. Restart `pnpm --filter @closetos/web dev` and sign in via the magic link
    on `/login`.
@@ -104,7 +103,7 @@ For Supabase magic-link auth on mobile, whitelist the deep link in your project:
 | `/login`              | Email magic-link sign-in                                      |
 | `/auth/callback`      | OAuth/PKCE callback that exchanges code for session           |
 | `/library`            | Filterable, searchable item grid (category chips, tsvector)   |
-| `/library/add`        | Multi-step add: photo → AI auto-fill → confirm → save         |
+| `/library/add`        | Add an item: photo + structured fields, manual entry         |
 | `/library/[id]`       | Detail view with structured fields + last-worn + cost-per-wear |
 | `/outfits`            | Saved outfits grid                                             |
 | `/outfits/new`        | Outfit composer (multi-pick items grouped by category, optional date logs to calendar) |
@@ -124,8 +123,6 @@ For Supabase magic-link auth on mobile, whitelist the deep link in your project:
 | `/onboarding`         | First-run flow: 4 steps, auto-shown on initial sign-in         |
 | `/api/account/export` | GET: streams a ZIP of all rows + media originals (GDPR/DPDP)   |
 | `/api/account`        | DELETE: purges Storage + auth user (cascades through all tables) |
-| `/api/items/auto-fill`| Vision call → JSON of suggested fields                        |
-| `/api/search/semantic`| Embedding-based search (depends on `match_items` RPC)         |
 
 ---
 
@@ -135,8 +132,7 @@ Defined in `supabase/migrations/0001_init.sql`. Key tables:
 
 - `items` — single discriminated table for all 5 categories. Common fields up
   top, category-specific fields under `details jsonb`, validated by Zod
-  (`packages/domain/src/items.ts`). Has a `tsvector` `search_text` and a
-  `vector(1536)` `embedding`.
+  (`packages/domain/src/items.ts`). Has a `tsvector` `search_text` for full-text search.
 - `folders` (nestable), `tags`, `item_tags`, `item_images`
 - `outfits`, `outfit_items`, `calendar_events` — with a trigger that updates
   `items.details.last_worn_date` whenever a calendar event references an outfit.
@@ -151,12 +147,9 @@ row for join tables.
 ## Edge functions
 
 ```bash
-supabase functions deploy embed-item process-image
-supabase secrets set OPENAI_API_KEY=...
+supabase functions deploy process-image
 ```
 
-- **`embed-item`** — given `{item_id}`, builds a string from the item's text
-  fields and stores a 1536-dim embedding on the row.
 - **`process-image`** — given `{object_path}`, downloads the original from
   `items-private`, strips EXIF (incl. GPS), produces `thumb` (256), `medium` (1024),
   and `large` (2048) WebP variants alongside it.
@@ -206,7 +199,6 @@ The full go-live runbook is in [LAUNCH.md](LAUNCH.md). TL;DR:
 ## Beyond v1 (nice-to-haves)
 
 - Outfit recommendations & style analytics (cost-per-wear leaderboard, most-worn items)
-- AI stylist suggestions (LLM picks an outfit for an event)
 - Barcode / bill scanning during intake
 - Folder sharing in `/share/[token]` (currently item + outfit only)
 - Mobile dark mode (web is wired; native uses Appearance API + same tokens — straightforward follow-up)

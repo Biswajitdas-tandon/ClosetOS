@@ -7,7 +7,7 @@ mobile app to TestFlight + Google Play internal testing.
 
 ## ✅ Pre-flight (do once)
 
-- [ ] **DB migrations applied** — both `0001_init.sql` and `0002_match_items_rpc.sql` are loaded in the production Supabase project.
+- [ ] **DB migrations applied** — `0001_init.sql`, `0002_match_items_rpc.sql`, and `0003_drop_ai.sql` are loaded in the production Supabase project. (`0003` reverses the AI bits — drops the `match_items` RPC, the embedding column, the ivfflat index, and the `vector` extension.)
 - [ ] **RLS test** — sign in as user A and user B in two private windows; confirm A's `/library` doesn't show B's items.
 - [ ] **Storage buckets exist**: `items-private` (private) and `items-public` (public). Migration creates them; verify in Dashboard → Storage.
 - [ ] **Service-role key** stored only in Vercel env (never committed, never exposed to client). Anon key is safe to expose.
@@ -26,7 +26,7 @@ npx vercel@latest login        # one-time, browser
 
 After first deploy:
 - [ ] Add production URL to Supabase redirect/site URLs (above).
-- [ ] In Vercel project settings → **Environment Variables**, confirm `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and `OPENAI_API_KEY` are present in **Production**.
+- [ ] In Vercel project settings → **Environment Variables**, confirm `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` are present in **Production**.
 - [ ] Add a **custom domain** (Project → Settings → Domains). Vercel manages DNS + Let's Encrypt automatically.
 - [ ] Smoke test on prod:
   - [ ] `/` renders (light + dark mode).
@@ -99,14 +99,6 @@ After live URL is set up:
 - [ ] **CLS check**: `ItemCard` already reserves `aspect-[4/5]` so images don't shift.
 - [ ] **Long-list virtualization**: if libraries grow > 500 items, swap the static map for `react-virtual` in `apps/web/src/app/library/page.tsx`.
 - [ ] **Image variants**: ensure the client requests the `medium` (1024px) variant, not the original. Add a Storage URL helper if needed.
-
----
-
-## 🤖 AI cost guardrails
-
-- [ ] **Auto-fill cache**: hash uploaded image bytes; if the same hash was processed in the last 24 h, return the cached response instead of re-calling Vision. (Stub today.)
-- [ ] **Embeddings backlog**: cron the `embed-item` edge function so it batches items missing embeddings every hour, instead of synchronously per save.
-- [ ] **Budget alerts**: set spend limits in OpenAI dashboard.
 
 ---
 

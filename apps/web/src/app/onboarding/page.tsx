@@ -20,7 +20,7 @@ export default async function OnboardingPage() {
   const steps = [
     {
       title: 'Add your first item',
-      body: 'Snap a photo and we’ll auto-fill the details. Apparel, jewelry, art — anything you collect.',
+      body: 'Add a photo and fill in the details. Apparel, jewelry, art — anything you collect.',
       href: '/library/add',
       cta: 'Add item',
       done: has,

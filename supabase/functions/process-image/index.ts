@@ -3,6 +3,8 @@
 //
 // Payload: { object_path: string }    // e.g. "<user_id>/<item_id>/raw.jpg"
 // Output : { thumb, medium, large } storage paths.
+//
+// Auto-deployed from `main` via .github/workflows/supabase-deploy.yml.
 
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'jsr:@supabase/supabase-js@2';

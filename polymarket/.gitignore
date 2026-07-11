@@ -1,0 +1,5 @@
+# runtime sqlite database (system of record lives on the host, not in git)
+*.db
+*.db-wal
+*.db-shm
+node_modules/

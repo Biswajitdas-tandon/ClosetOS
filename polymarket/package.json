@@ -1,0 +1,15 @@
+{
+  "name": "yng-polymarket",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Play-money prediction market for the YNG year — locked dynamic odds.",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  }
+}

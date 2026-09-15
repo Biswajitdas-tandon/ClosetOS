@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { browserClient } from '@/lib/supabase';
 
 // Google sign-in stays hidden until the provider is configured in Supabase
@@ -10,9 +11,13 @@ import { browserClient } from '@/lib/supabase';
 const GOOGLE_AUTH_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === 'true';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [pwBusy, setPwBusy] = useState(false);
+  const [pwError, setPwError] = useState<string | null>(null);
   const [oauthBusy, setOauthBusy] = useState(false);
   const [oauthError, setOauthError] = useState<string | null>(null);
   // /auth/callback redirects here with ?error=… when a link is invalid/expired.
@@ -45,8 +50,35 @@ export default function LoginPage() {
     }
   }
 
-  async function onSubmit(e: React.FormEvent) {
+  // Primary path: email + password. Works on any device and doesn't depend on
+  // email delivery. Accounts are created by an admin (Supabase → Auth → Users).
+  async function signInWithPassword(e: React.FormEvent) {
     e.preventDefault();
+    setPwBusy(true);
+    setPwError(null);
+    setError(null);
+    try {
+      const supabase = browserClient();
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      // Same first-run heuristic as /auth/callback: empty library → onboarding.
+      const { count } = await supabase
+        .from('items')
+        .select('*', { count: 'exact', head: true });
+      router.push((count ?? 0) === 0 ? '/onboarding' : '/library');
+      router.refresh();
+    } catch (err) {
+      setPwError(err instanceof Error ? err.message : 'Could not sign in');
+      setPwBusy(false);
+    }
+  }
+
+  // Secondary path: magic link to the same email address.
+  async function sendMagicLink() {
+    if (!email) {
+      setError('Enter your email first.');
+      return;
+    }
     setStatus('sending');
     setError(null);
     try {
@@ -72,8 +104,8 @@ export default function LoginPage() {
         <h1 className="mb-2 font-display text-3xl">Sign in</h1>
         <p className="mb-8 text-sm text-text-secondary">
           {GOOGLE_AUTH_ENABLED
-            ? 'One tap with Google, or a magic link to your inbox.'
-            : 'We’ll email you a magic link — no password to remember.'}
+            ? 'One tap with Google, or the email and password you were given.'
+            : 'Use the email and password you were given.'}
         </p>
 
         {callbackError ? (
@@ -83,7 +115,7 @@ export default function LoginPage() {
           >
             <p className="font-medium text-status-sold">Sign-in didn&apos;t complete</p>
             <p className="mt-1 text-text-secondary">{callbackError}</p>
-            <p className="mt-2 text-text-muted">Request a new link below.</p>
+            <p className="mt-2 text-text-muted">Sign in with your password below, or request a new link.</p>
           </div>
         ) : null}
 
@@ -112,7 +144,7 @@ export default function LoginPage() {
               </>
             ) : null}
 
-            <form onSubmit={onSubmit} className="space-y-4">
+            <form onSubmit={signInWithPassword} className="space-y-4">
               <label className="block">
                 <span className="mb-1.5 block text-xs font-medium text-text-secondary">
                   Email
@@ -120,23 +152,51 @@ export default function LoginPage() {
                 <input
                   type="email"
                   required
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   className="w-full rounded-md border border-border-subtle bg-bg-surface px-3 py-2.5 text-sm outline-none focus:border-border-strong"
                 />
               </label>
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-medium text-text-secondary">
+                  Password
+                </span>
+                <input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-md border border-border-subtle bg-bg-surface px-3 py-2.5 text-sm outline-none focus:border-border-strong"
+                />
+              </label>
               <button
                 type="submit"
-                disabled={status === 'sending'}
+                disabled={pwBusy}
                 className="w-full rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-text-onAccent transition-colors hover:bg-accent-hover disabled:opacity-60"
               >
-                {status === 'sending' ? 'Sending…' : 'Send magic link'}
+                {pwBusy ? 'Signing in…' : 'Sign in'}
               </button>
-              {error ? (
-                <p className="text-sm text-status-sold">{error}</p>
+              {pwError ? (
+                <p className="text-sm text-status-sold">{pwError}</p>
               ) : null}
             </form>
+
+            <div className="text-center text-sm">
+              <button
+                type="button"
+                onClick={sendMagicLink}
+                disabled={status === 'sending'}
+                className="text-text-secondary underline-offset-4 hover:text-text-primary hover:underline disabled:opacity-60"
+              >
+                {status === 'sending' ? 'Sending…' : 'No password? Email me a magic link instead'}
+              </button>
+              {error ? (
+                <p className="mt-2 text-sm text-status-sold">{error}</p>
+              ) : null}
+            </div>
           </div>
         )}
       </div>

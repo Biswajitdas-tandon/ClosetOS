@@ -10,6 +10,16 @@ mobile app to TestFlight + Google Play internal testing.
 Supabase project **`closetos`** — ref `ncowtwpxvefhbljwfsxo`, region ap-south-1 (Mumbai), free tier.
 Dashboard: https://supabase.com/dashboard/project/ncowtwpxvefhbljwfsxo
 
+## 🧪 POC handover (no domain, no spend) — 15 Sep 2026
+
+The client gets an **email + password**; no email delivery involved. Magic link stays as a fallback on `/login`.
+
+1. Create their account: https://supabase.com/dashboard/project/ncowtwpxvefhbljwfsxo/auth/users → **Add user → Create new user** → their email + a password → tick **Auto Confirm User** → Create.
+2. Send them: `https://closetos-iota.vercel.app/login` + the email/password (share the password out-of-band, e.g. WhatsApp, not in the same email as the URL).
+3. They land on `/onboarding` (empty library) → Add item → Compose outfit → Plan trip.
+
+To reset a password later: same page → user → ⋯ → *Reset password* / *Send password recovery* (recovery mail goes through the built-in sender — unreliable to corporate domains; prefer setting a new password directly).
+
 ## ✅ Pre-flight (do once)
 
 - [x] **DB migrations applied** — all three migrations are applied and recorded on the production project (versions `20260915063327`, `…342`, `…354`; the files in `supabase/migrations/` carry the same versions so `supabase db push` is a no-op). `0003` reverses the AI bits — drops the `match_items` RPC, the embedding column, the ivfflat index, and the `vector` extension.

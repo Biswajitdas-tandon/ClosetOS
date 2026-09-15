@@ -17,18 +17,16 @@ Dashboard: https://supabase.com/dashboard/project/ncowtwpxvefhbljwfsxo
 - [x] **RLS enabled** on all 14 tables (verified). Still to do: the two-user test below.
 - [x] **Edge function `process-image`** deployed (v1, JWT verification on).
 - [x] **Vercel env (Production)**: `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` point at the new project.
-- [ ] **`SUPABASE_SERVICE_ROLE_KEY` in Vercel** — needed by `/share/[token]`, `/api/account/export`, `DELETE /api/account`. Not set yet (secret; must be added by a human). Either:
-  - Dashboard → Project Settings → API → copy `service_role` → Vercel → closetos → Settings → Environment Variables → add for Production → Redeploy; **or**
-  - from a terminal (never prints the key):
+- [x] **`SUPABASE_SERVICE_ROLE_KEY` in Vercel** (Production, type Secret) — set 15 Sep 2026; `/share/[token]` and `/api/account/*` verified responding (404 / 401, no config errors). To rotate later, from a terminal (never prints the key):
     ```bash
     npx supabase@latest login
-    npx supabase@latest projects api-keys --project-ref ncowtwpxvefhbljwfsxo -o json \
-      | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>process.stdout.write(JSON.parse(d).find(k=>k.name==='service_role').api_key))" \
-      | npx vercel@latest env add SUPABASE_SERVICE_ROLE_KEY production --type secret --yes
+    KEY=$(npx supabase@latest projects api-keys --project-ref ncowtwpxvefhbljwfsxo -o json 2>/dev/null       | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>process.stdout.write(JSON.parse(d.slice(d.indexOf('['))).find(k=>k.name==='service_role').api_key))")
+    npx vercel@latest env rm SUPABASE_SERVICE_ROLE_KEY production --yes
+    printf '%s' "$KEY" | npx vercel@latest env add SUPABASE_SERVICE_ROLE_KEY production --type secret
     npx vercel@latest redeploy closetos-iota.vercel.app
     ```
-- [ ] **Auth Site URL + redirect URLs** — set by the `Deploy Supabase` GitHub Action (Management API PATCH, values in the workflow's `env`). Confirm in Dashboard → Auth → URL Configuration: Site URL = `https://closetos-iota.vercel.app`, redirects include `/auth/callback` on prod + localhost, and `closetos://auth/callback`. If the Action is red, set them by hand.
-- [ ] **GitHub secret `SUPABASE_DB_PASSWORD`** is the *old* project's password → the `Apply migrations` step fails until it's replaced. Reset the DB password in Dashboard → Project Settings → Database, then `gh secret set SUPABASE_DB_PASSWORD`. (`SUPABASE_ACCESS_TOKEN` is account-level and still valid.)
+- [x] **Auth Site URL + redirect URLs** — set 15 Sep 2026 via `supabase config push` (auth-only config, verified with `config diff`): Site URL `https://closetos-iota.vercel.app`; allow-list = prod `/auth/callback` + `/**`, localhost 3000/3001, `closetos://auth/callback`. The `Deploy Supabase` Action re-asserts these on every run once its token works (below).
+- [ ] **GitHub Action secrets are stale** (non-blocking — only needed for future `supabase/` changes to auto-deploy). `SUPABASE_ACCESS_TOKEN` 403s on the new project → create a new token at https://supabase.com/dashboard/account/tokens and `gh secret set SUPABASE_ACCESS_TOKEN -R Biswajitdas-tandon/ClosetOS`. `SUPABASE_DB_PASSWORD` is the old project's → reset in Dashboard → Project Settings → Database, then `gh secret set SUPABASE_DB_PASSWORD -R Biswajitdas-tandon/ClosetOS`. Then re-run the `Deploy Supabase` workflow.
 - [ ] **Google sign-in** — the "Continue with Google" button needs a Google OAuth client ID/secret entered in Dashboard → Auth → Providers → Google (redirect URI `https://ncowtwpxvefhbljwfsxo.supabase.co/auth/v1/callback`). Until then, use the magic link.
 - [ ] **Magic-link email volume** — Supabase's built-in SMTP is capped at a handful of emails/hour. For real users, wire a custom SMTP (Resend/Postmark) in Dashboard → Auth → SMTP Settings.
 - [ ] **RLS test** — sign in as user A and user B in two private windows; confirm A's `/library` doesn't show B's items.

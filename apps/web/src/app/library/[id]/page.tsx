@@ -6,7 +6,9 @@ import { isSupabaseConfigured } from '@/lib/supabase';
 import { serverClient } from '@/lib/supabase-server';
 import { DEMO_ITEMS } from '@/lib/demo-data';
 import { relativeDay } from '@/lib/dates';
+import { primaryImagePath, signImagePath, type ImageRow } from '@/lib/images';
 import { ShareButton } from '@/components/ShareModal';
+import { DeleteItemButton } from '@/components/DeleteItemButton';
 
 export default async function ItemDetailPage({
   params,
@@ -56,6 +58,10 @@ export default async function ItemDetailPage({
       .eq('id', id)
       .maybeSingle();
     if (data) {
+      const imageUrl = await signImagePath(
+        supabase,
+        primaryImagePath(data.item_images as ImageRow[] | null),
+      );
       item = {
         id: data.id,
         title: data.title ?? '(untitled)',
@@ -68,6 +74,7 @@ export default async function ItemDetailPage({
         status: data.status,
         notes: data.notes,
         details: data.details as Record<string, unknown>,
+        imageUrl,
       };
     }
   }
@@ -102,7 +109,17 @@ export default async function ItemDetailPage({
                   <p className="mt-1 text-base text-text-secondary">{item.brand}</p>
                 ) : null}
               </div>
-              {item.id.length === 36 ? <ShareButton resourceType="item" resourceId={item.id} /> : null}
+              {item.id.length === 36 ? (
+                <div className="flex shrink-0 items-center gap-3">
+                  <Link
+                    href={`/library/${item.id}/edit`}
+                    className="rounded-md border border-border-subtle px-3 py-1.5 text-sm hover:border-border-strong"
+                  >
+                    Edit
+                  </Link>
+                  <ShareButton resourceType="item" resourceId={item.id} />
+                </div>
+              ) : null}
             </div>
 
             <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-border-subtle pt-6 text-sm">
@@ -148,6 +165,12 @@ export default async function ItemDetailPage({
                 <p className="whitespace-pre-wrap text-sm leading-relaxed text-text-secondary">
                   {item.notes}
                 </p>
+              </div>
+            ) : null}
+
+            {item.id.length === 36 ? (
+              <div className="mt-10 border-t border-border-subtle pt-6">
+                <DeleteItemButton itemId={item.id} title={item.title} />
               </div>
             ) : null}
           </div>

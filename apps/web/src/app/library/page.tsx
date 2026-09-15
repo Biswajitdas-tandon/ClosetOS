@@ -5,6 +5,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { serverClient } from '@/lib/supabase-server';
 import { DEMO_ITEMS } from '@/lib/demo-data';
+import { primaryImagePath, signImagePaths, type ImageRow } from '@/lib/images';
 
 type SearchParams = Promise<{ category?: string; q?: string }>;
 
@@ -150,14 +151,18 @@ async function loadItems({
   const { data, error } = await query;
   if (error) return { items: [], user: { email: user.email }, isDemo: false };
 
-  const items: LibItem[] = (data ?? []).map((row) => ({
+  const rows = data ?? [];
+  const paths = rows.map((row) => primaryImagePath(row.item_images as ImageRow[] | null));
+  const signed = await signImagePaths(supabase, paths);
+
+  const items: LibItem[] = rows.map((row, i) => ({
     id: row.id,
     category: row.category as Category,
     title: row.title ?? '(untitled)',
     brand: row.brand,
     colour: row.colour,
     status: row.status as LibItem['status'],
-    imageUrl: undefined, // signed URL fetch happens client-side or via image proxy
+    imageUrl: paths[i] ? signed.get(paths[i]!) : undefined,
   }));
 
   return { items, user: { email: user.email }, isDemo: false };

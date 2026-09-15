@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { CATEGORY_LABEL, STATUS_LABEL, type Category, type Status } from '@closetos/domain';
 import { createAdminClient } from '@closetos/db';
 import { isSupabaseConfigured } from '@/lib/supabase';
+import { primaryImagePath, signImagePath, type ImageRow } from '@/lib/images';
 
 // Public, read-only viewer for a share token. Uses the service-role client
 // (server-only) so it can bypass RLS once the token has been validated.
@@ -69,9 +70,13 @@ async function ItemView({ id }: { id: string }) {
   const admin = createAdminClient();
   const { data } = await admin
     .from('items')
-    .select('id, title, brand, colour, material, price_amount, price_currency, status, notes, category, details')
+    .select('id, title, brand, colour, material, price_amount, price_currency, status, notes, category, details, item_images(storage_path, is_primary)')
     .eq('id', id)
     .maybeSingle();
+  const imageUrl = await signImagePath(
+    admin,
+    primaryImagePath((data?.item_images ?? null) as ImageRow[] | null),
+  );
   type ItemRow = {
     id: string; title: string | null; brand: string | null; colour: string | null;
     material: string | null; price_amount: number | null; price_currency: string;
@@ -90,6 +95,12 @@ async function ItemView({ id }: { id: string }) {
         </svg>
         Shared with you · view only
       </div>
+      {imageUrl ? (
+        <div className="mb-8 aspect-[4/5] max-h-[520px] overflow-hidden rounded-md bg-bg-muted">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={imageUrl} alt={item.title ?? ''} className="h-full w-full object-cover" />
+        </div>
+      ) : null}
       <p className="text-xs uppercase tracking-[0.2em] text-text-muted">{CATEGORY_LABEL[item.category]}</p>
       <h1 className="mt-2 font-display text-4xl tracking-tight">{item.title ?? '(untitled)'}</h1>
       {item.brand ? <p className="mt-1 text-base text-text-secondary">{item.brand}</p> : null}

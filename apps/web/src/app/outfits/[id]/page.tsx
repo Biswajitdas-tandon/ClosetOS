@@ -5,6 +5,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { ShareButton } from '@/components/ShareModal';
 import { isSupabaseConfigured } from '@/lib/supabase';
 import { serverClient } from '@/lib/supabase-server';
+import { primaryImagePath, signImagePaths, type ImageRow } from '@/lib/images';
 
 export default async function OutfitDetail({
   params,
@@ -20,7 +21,7 @@ export default async function OutfitDetail({
 
   const { data } = await supabase
     .from('outfits')
-    .select('id, name, occasion, event_date, notes, created_at, outfit_items(item_id, role, items(id, title, brand, colour, category))')
+    .select('id, name, occasion, event_date, notes, created_at, outfit_items(item_id, role, items(id, title, brand, colour, category, item_images(storage_path, is_primary)))')
     .eq('id', id)
     .maybeSingle();
 
@@ -35,12 +36,14 @@ export default async function OutfitDetail({
     created_at: string;
     outfit_items: { item_id: string; role: string | null; items: {
       id: string; title: string | null; brand: string | null; colour: string | null;
-      category: Category;
+      category: Category; item_images: ImageRow[] | null;
     } | null }[] | null;
   };
 
   const o = data as unknown as OutfitData;
   const items = (o.outfit_items ?? []).map((oi) => oi.items).filter((x): x is NonNullable<typeof x> => x !== null);
+  const paths = items.map((it) => primaryImagePath(it.item_images));
+  const signed = await signImagePaths(supabase, paths);
 
   return (
     <div className="min-h-screen">
@@ -73,12 +76,19 @@ export default async function OutfitDetail({
         </h2>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {items.map((it) => (
+          {items.map((it, i) => (
             <Link
               key={it.id}
               href={`/library/${it.id}`}
-              className="rounded-md border border-border-subtle bg-bg-surface p-4 transition-colors hover:border-border-strong"
+              className="overflow-hidden rounded-md border border-border-subtle bg-bg-surface transition-colors hover:border-border-strong"
             >
+              <div className="aspect-[4/5] bg-bg-muted">
+                {paths[i] && signed.get(paths[i]!) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={signed.get(paths[i]!)} alt="" className="h-full w-full object-cover" />
+                ) : null}
+              </div>
+              <div className="p-4">
               <p className="text-xs uppercase tracking-wider text-text-muted">
                 {CATEGORY_LABEL[it.category]}
               </p>
@@ -86,6 +96,7 @@ export default async function OutfitDetail({
               <p className="mt-0.5 truncate text-xs text-text-muted">
                 {[it.brand, it.colour].filter(Boolean).join(' · ')}
               </p>
+              </div>
             </Link>
           ))}
         </div>

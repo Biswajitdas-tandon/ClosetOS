@@ -4,6 +4,11 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { browserClient } from '@/lib/supabase';
 
+// Google sign-in stays hidden until the provider is configured in Supabase
+// (Auth → Providers → Google) and this flag is set in Vercel. A visible button
+// that errors is worse than no button.
+const GOOGLE_AUTH_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === 'true';
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
@@ -66,7 +71,9 @@ export default function LoginPage() {
         </Link>
         <h1 className="mb-2 font-display text-3xl">Sign in</h1>
         <p className="mb-8 text-sm text-text-secondary">
-          One tap with Google, or a magic link to your inbox.
+          {GOOGLE_AUTH_ENABLED
+            ? 'One tap with Google, or a magic link to your inbox.'
+            : 'We’ll email you a magic link — no password to remember.'}
         </p>
 
         {callbackError ? (
@@ -86,20 +93,24 @@ export default function LoginPage() {
           </div>
         ) : (
           <div className="space-y-5">
-            <button
-              type="button"
-              onClick={signInWithGoogle}
-              disabled={oauthBusy}
-              className="flex w-full items-center justify-center gap-3 rounded-md border border-border-subtle bg-bg-surface px-4 py-2.5 text-sm font-medium text-text-primary transition-colors hover:border-border-strong disabled:opacity-60"
-            >
-              <GoogleIcon />
-              {oauthBusy ? 'Redirecting…' : 'Continue with Google'}
-            </button>
-            {oauthError ? (
-              <p className="text-sm text-status-sold">{oauthError}</p>
-            ) : null}
+            {GOOGLE_AUTH_ENABLED ? (
+              <>
+                <button
+                  type="button"
+                  onClick={signInWithGoogle}
+                  disabled={oauthBusy}
+                  className="flex w-full items-center justify-center gap-3 rounded-md border border-border-subtle bg-bg-surface px-4 py-2.5 text-sm font-medium text-text-primary transition-colors hover:border-border-strong disabled:opacity-60"
+                >
+                  <GoogleIcon />
+                  {oauthBusy ? 'Redirecting…' : 'Continue with Google'}
+                </button>
+                {oauthError ? (
+                  <p className="text-sm text-status-sold">{oauthError}</p>
+                ) : null}
 
-            <Divider label="or" />
+                <Divider label="or" />
+              </>
+            ) : null}
 
             <form onSubmit={onSubmit} className="space-y-4">
               <label className="block">

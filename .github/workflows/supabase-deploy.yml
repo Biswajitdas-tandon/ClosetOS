@@ -36,6 +36,7 @@ jobs:
       # can't block auth-config or edge-function updates.
       - name: Push auth URL config (site URL + redirect allow-list)
         run: |
+          set -o pipefail
           body=$(jq -n --arg s "$SITE_URL" --arg u "$(echo "$REDIRECT_ALLOW_LIST" | tr -d ' \n')" \
             '{site_url: $s, uri_allow_list: $u}')
           curl -sS --fail-with-body -X PATCH \

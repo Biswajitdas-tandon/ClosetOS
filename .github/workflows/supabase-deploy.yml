@@ -6,6 +6,7 @@ on:
     paths:
       - 'supabase/migrations/**'
       - 'supabase/functions/**'
+      - 'supabase/config.toml'
       - '.github/workflows/supabase-deploy.yml'
   workflow_dispatch: {}
 
@@ -15,7 +16,7 @@ jobs:
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-      PROJECT_REF: sqmkhcdkvpxzzhljgrus
+      PROJECT_REF: ncowtwpxvefhbljwfsxo
     steps:
       - uses: actions/checkout@v4
 
@@ -23,11 +24,16 @@ jobs:
         with:
           version: latest
 
+      # Steps that only need the access token run first, so a stale DB password
+      # can't block auth-config or edge-function updates.
+      - name: Push auth config (site URL + redirect URLs from supabase/config.toml)
+        run: supabase config push --project-ref $PROJECT_REF --yes
+
+      - name: Deploy edge functions
+        run: supabase functions deploy --project-ref $PROJECT_REF
+
       - name: Link project
         run: supabase link --project-ref $PROJECT_REF
 
       - name: Apply migrations
         run: supabase db push
-
-      - name: Deploy edge functions
-        run: supabase functions deploy --project-ref $PROJECT_REF

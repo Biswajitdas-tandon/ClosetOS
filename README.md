@@ -4,8 +4,9 @@ Personal inventory + planning system for **apparel · accessories · jewelry · 
 Image-first manual intake, full-text search, calendar/outfits, packing lists, and shareable folders.
 
 > **Repo:** https://github.com/Biswajitdas-tandon/ClosetOS · **Live:** https://closetos-iota.vercel.app
-> **Status:** Phase 0–7 scaffold — feature-complete v1. Web is launch-ready; mobile builds clean and ships via EAS. See [LAUNCH.md](LAUNCH.md) for the go-live checklist.
-> Every push to `main` auto-deploys to production via Vercel. See [build-a-modern-full-stack-buzzing-lemur.md](../../.claude/plans/build-a-modern-full-stack-buzzing-lemur.md) for the full roadmap.
+> **Backend:** Supabase project `closetos` (`ncowtwpxvefhbljwfsxo`, ap-south-1 / Mumbai). Schema, RLS, storage buckets and the `process-image` edge function are deployed.
+> **Status:** Phase 0–7 — feature-complete v1. Web is live; mobile builds clean and ships via EAS. See [LAUNCH.md](LAUNCH.md) for what's still open.
+> Every push to `main` auto-deploys the web app via Vercel; changes under `supabase/` auto-deploy via GitHub Actions.
 
 ---
 
@@ -27,7 +28,7 @@ ClosetOS/
 │   ├── db/                      # Supabase client (browser + server) + DB types
 │   └── ui/                      # design tokens + primitives (ItemCard, FilterChip, EmptyState)
 ├── supabase/
-│   ├── migrations/              # 0001_init.sql, 0002_match_items_rpc.sql, 0003_drop_ai.sql
+│   ├── migrations/              # <version>_0001_init.sql, _0002_match_items_rpc.sql, _0003_drop_ai.sql
 │   └── functions/               # process-image (Deno edge function)
 └── turbo.json · pnpm-workspace.yaml · .npmrc (node-linker=hoisted, required for RN/Expo)
 ```
@@ -55,9 +56,9 @@ To enable real persistence + auth:
    SUPABASE_SERVICE_ROLE_KEY=...
    ```
 3. **Run the migrations** (one-time):
-   - Hosted: open the SQL editor in the Supabase dashboard and paste
-     `supabase/migrations/0001_init.sql`, then `0002_match_items_rpc.sql`,
-     then `0003_drop_ai.sql`.
+   - Hosted: `supabase link --project-ref <ref> && supabase db push` (or paste the
+     three files under `supabase/migrations/` into the dashboard SQL editor, in order).
+     The production project already has all three applied.
    - Local: `pnpm db:start && pnpm db:reset` (requires the Supabase CLI).
 4. Restart `pnpm --filter @closetos/web dev` and sign in via the magic link
    on `/login`.
@@ -129,7 +130,7 @@ For Supabase magic-link auth on mobile, whitelist the deep link in your project:
 
 ## Database
 
-Defined in `supabase/migrations/0001_init.sql`. Key tables:
+Defined in `supabase/migrations/*_0001_init.sql`. Key tables:
 
 - `items` — single discriminated table for all 5 categories. Common fields up
   top, category-specific fields under `details jsonb`, validated by Zod

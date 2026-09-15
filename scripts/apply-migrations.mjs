@@ -14,8 +14,9 @@ if (!password || !host) {
 }
 
 const files = [
-  'supabase/migrations/0001_init.sql',
-  'supabase/migrations/0002_match_items_rpc.sql',
+  'supabase/migrations/20260915063327_0001_init.sql',
+  'supabase/migrations/20260915063342_0002_match_items_rpc.sql',
+  'supabase/migrations/20260915063354_0003_drop_ai.sql',
 ];
 
 const client = new Client({

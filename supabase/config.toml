@@ -10,16 +10,26 @@ max_rows = 1000
 [db]
 port = 54322
 shadow_port = 54320
-major_version = 15
+major_version = 17
 
 [studio]
 enabled = true
 port = 54323
 
+# [auth] is pushed to the hosted project (ncowtwpxvefhbljwfsxo) by
+# `supabase config push` in .github/workflows/supabase-deploy.yml.
+# site_url = production hostname; every callback the app can request must be listed
+# in additional_redirect_urls or Supabase falls back to site_url after sign-in.
 [auth]
 enabled = true
-site_url = "http://localhost:3000"
-additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+site_url = "https://closetos-iota.vercel.app"
+additional_redirect_urls = [
+  "https://closetos-iota.vercel.app/auth/callback",
+  "https://closetos-iota.vercel.app/**",
+  "http://localhost:3000/auth/callback",
+  "http://localhost:3001/auth/callback",
+  "closetos://auth/callback",
+]
 jwt_expiry = 3600
 enable_signup = true
 

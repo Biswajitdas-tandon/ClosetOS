@@ -5,14 +5,33 @@ mobile app to TestFlight + Google Play internal testing.
 
 ---
 
+## Production backend (15 Sep 2026)
+
+Supabase project **`closetos`** — ref `ncowtwpxvefhbljwfsxo`, region ap-south-1 (Mumbai), free tier.
+Dashboard: https://supabase.com/dashboard/project/ncowtwpxvefhbljwfsxo
+
 ## ✅ Pre-flight (do once)
 
-- [ ] **DB migrations applied** — `0001_init.sql`, `0002_match_items_rpc.sql`, and `0003_drop_ai.sql` are loaded in the production Supabase project. (`0003` reverses the AI bits — drops the `match_items` RPC, the embedding column, the ivfflat index, and the `vector` extension.)
+- [x] **DB migrations applied** — all three migrations are applied and recorded on the production project (versions `20260915063327`, `…342`, `…354`; the files in `supabase/migrations/` carry the same versions so `supabase db push` is a no-op). `0003` reverses the AI bits — drops the `match_items` RPC, the embedding column, the ivfflat index, and the `vector` extension.
+- [x] **Storage buckets exist**: `items-private` (private) and `items-public` (public) — created by the migration, verified.
+- [x] **RLS enabled** on all 14 tables (verified). Still to do: the two-user test below.
+- [x] **Edge function `process-image`** deployed (v1, JWT verification on).
+- [x] **Vercel env (Production)**: `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` point at the new project.
+- [ ] **`SUPABASE_SERVICE_ROLE_KEY` in Vercel** — needed by `/share/[token]`, `/api/account/export`, `DELETE /api/account`. Not set yet (secret; must be added by a human). Either:
+  - Dashboard → Project Settings → API → copy `service_role` → Vercel → closetos → Settings → Environment Variables → add for Production → Redeploy; **or**
+  - from a terminal (never prints the key):
+    ```bash
+    npx supabase@latest login
+    npx supabase@latest projects api-keys --project-ref ncowtwpxvefhbljwfsxo -o json \
+      | node -e "let d='';process.stdin.on('data',c=>d+=c).on('end',()=>process.stdout.write(JSON.parse(d).find(k=>k.name==='service_role').api_key))" \
+      | npx vercel@latest env add SUPABASE_SERVICE_ROLE_KEY production --type secret --yes
+    npx vercel@latest redeploy closetos-iota.vercel.app
+    ```
+- [ ] **Auth Site URL + redirect URLs** — declared in `supabase/config.toml` and pushed by the `Deploy Supabase` GitHub Action (`supabase config push`). Confirm in Dashboard → Auth → URL Configuration: Site URL = `https://closetos-iota.vercel.app`, redirects include `/auth/callback` on prod + localhost, and `closetos://auth/callback`. If the Action is red, set them by hand.
+- [ ] **GitHub secret `SUPABASE_DB_PASSWORD`** is the *old* project's password → the `Apply migrations` step fails until it's replaced. Reset the DB password in Dashboard → Project Settings → Database, then `gh secret set SUPABASE_DB_PASSWORD`. (`SUPABASE_ACCESS_TOKEN` is account-level and still valid.)
+- [ ] **Google sign-in** — the "Continue with Google" button needs a Google OAuth client ID/secret entered in Dashboard → Auth → Providers → Google (redirect URI `https://ncowtwpxvefhbljwfsxo.supabase.co/auth/v1/callback`). Until then, use the magic link.
+- [ ] **Magic-link email volume** — Supabase's built-in SMTP is capped at a handful of emails/hour. For real users, wire a custom SMTP (Resend/Postmark) in Dashboard → Auth → SMTP Settings.
 - [ ] **RLS test** — sign in as user A and user B in two private windows; confirm A's `/library` doesn't show B's items.
-- [ ] **Storage buckets exist**: `items-private` (private) and `items-public` (public). Migration creates them; verify in Dashboard → Storage.
-- [ ] **Service-role key** stored only in Vercel env (never committed, never exposed to client). Anon key is safe to expose.
-- [ ] **Auth redirect URLs** include both `http://localhost:3001/auth/callback` (dev) and `https://<your-domain>/auth/callback` (prod). Mobile also needs `closetos://auth/callback`.
-- [ ] **Site URL** in Supabase Dashboard → Auth → URL Configuration matches the production hostname.
 
 ---
 

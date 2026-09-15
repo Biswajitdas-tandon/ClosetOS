@@ -3,7 +3,7 @@ project_id = "closetos"
 [api]
 enabled = true
 port = 54321
-schemas = ["public", "storage"]
+schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
@@ -16,9 +16,10 @@ major_version = 17
 enabled = true
 port = 54323
 
-# Local-dev auth settings. The hosted project's Site URL + redirect allow-list are
-# set by .github/workflows/supabase-deploy.yml (Management API PATCH) — keep the
-# two lists in sync when adding a callback.
+# Everything declared under [auth] is pushed to the hosted project
+# (ncowtwpxvefhbljwfsxo) with `supabase config push`. Run `supabase config diff`
+# first — push reconciles every declared key, so keep this section limited to
+# values that are meant to be identical locally and in production.
 [auth]
 enabled = true
 site_url = "https://closetos-iota.vercel.app"
@@ -34,7 +35,17 @@ enable_signup = true
 
 [auth.email]
 enable_signup = true
-enable_confirmations = false
+enable_confirmations = true
+
+# Both email-link templates use the token_hash flow (see supabase/templates/).
+# New users get "confirmation", returning users get "magic_link" — same body.
+[auth.email.template.confirmation]
+subject = "Sign in to ClosetOS"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.magic_link]
+subject = "Sign in to ClosetOS"
+content_path = "./supabase/templates/magic_link.html"
 
 [storage]
 enabled = true

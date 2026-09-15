@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { browserClient } from '@/lib/supabase';
 
@@ -10,6 +10,16 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [oauthBusy, setOauthBusy] = useState(false);
   const [oauthError, setOauthError] = useState<string | null>(null);
+  // /auth/callback redirects here with ?error=… when a link is invalid/expired.
+  // Read it client-side (not useSearchParams) so this page stays prerenderable.
+  const [callbackError, setCallbackError] = useState<string | null>(null);
+  useEffect(() => {
+    const msg = new URLSearchParams(window.location.search).get('error');
+    if (msg) {
+      setCallbackError(msg);
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
 
   async function signInWithGoogle() {
     setOauthBusy(true);
@@ -58,6 +68,17 @@ export default function LoginPage() {
         <p className="mb-8 text-sm text-text-secondary">
           One tap with Google, or a magic link to your inbox.
         </p>
+
+        {callbackError ? (
+          <div
+            role="alert"
+            className="mb-6 rounded-md border border-status-sold bg-bg-surface p-4 text-sm"
+          >
+            <p className="font-medium text-status-sold">Sign-in didn&apos;t complete</p>
+            <p className="mt-1 text-text-secondary">{callbackError}</p>
+            <p className="mt-2 text-text-muted">Request a new link below.</p>
+          </div>
+        ) : null}
 
         {status === 'sent' ? (
           <div className="rounded-md border border-border-subtle bg-bg-surface p-6 text-sm">

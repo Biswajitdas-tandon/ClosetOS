@@ -1,0 +1,17 @@
+<!-- ClosetOS magic-link / confirm-signup email.
+     Links to the app's /auth/callback with a token_hash so the link works on
+     whichever device opens it (no PKCE verifier needed). .RedirectTo is the
+     emailRedirectTo the client passed (web origin or closetos:// deep link). -->
+<h2 style="font-family:Georgia,serif;font-weight:600;margin:0 0 12px">Sign in to ClosetOS</h2>
+<p style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;margin:0 0 20px">
+  Tap the button to sign in. This link is single-use and expires in an hour.
+</p>
+<p style="margin:0 0 24px">
+  <a href="{{ if .RedirectTo }}{{ .RedirectTo }}{{ else }}{{ .SiteURL }}/auth/callback{{ end }}?token_hash={{ .TokenHash }}&type=email"
+     style="display:inline-block;background:#111;color:#fff;text-decoration:none;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;font-weight:500;padding:12px 22px;border-radius:8px">
+    Sign in
+  </a>
+</p>
+<p style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:13px;line-height:1.5;color:#666;margin:0">
+  Didn’t request this? Ignore it — nothing happens without the link.
+</p>

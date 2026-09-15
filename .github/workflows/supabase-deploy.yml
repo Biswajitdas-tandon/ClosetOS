@@ -6,7 +6,6 @@ on:
     paths:
       - 'supabase/migrations/**'
       - 'supabase/functions/**'
-      - 'supabase/config.toml'
       - '.github/workflows/supabase-deploy.yml'
   workflow_dispatch: {}
 
@@ -17,6 +16,15 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       PROJECT_REF: ncowtwpxvefhbljwfsxo
+      # Auth URL config for the hosted project. Every callback the app can ask for
+      # must be in the allow-list or Supabase falls back to SITE_URL after sign-in.
+      SITE_URL: https://closetos-iota.vercel.app
+      REDIRECT_ALLOW_LIST: >-
+        https://closetos-iota.vercel.app/auth/callback,
+        https://closetos-iota.vercel.app/**,
+        http://localhost:3000/auth/callback,
+        http://localhost:3001/auth/callback,
+        closetos://auth/callback
     steps:
       - uses: actions/checkout@v4
 
@@ -26,8 +34,15 @@ jobs:
 
       # Steps that only need the access token run first, so a stale DB password
       # can't block auth-config or edge-function updates.
-      - name: Push auth config (site URL + redirect URLs from supabase/config.toml)
-        run: supabase config push --project-ref $PROJECT_REF --yes
+      - name: Push auth URL config (site URL + redirect allow-list)
+        run: |
+          body=$(jq -n --arg s "$SITE_URL" --arg u "$(echo "$REDIRECT_ALLOW_LIST" | tr -d ' \n')" \
+            '{site_url: $s, uri_allow_list: $u}')
+          curl -sS --fail-with-body -X PATCH \
+            "https://api.supabase.com/v1/projects/$PROJECT_REF/config/auth" \
+            -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$body" | jq '{site_url, uri_allow_list}'
 
       - name: Deploy edge functions
         run: supabase functions deploy --project-ref $PROJECT_REF

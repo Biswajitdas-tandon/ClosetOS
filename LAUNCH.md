@@ -27,7 +27,7 @@ Dashboard: https://supabase.com/dashboard/project/ncowtwpxvefhbljwfsxo
       | npx vercel@latest env add SUPABASE_SERVICE_ROLE_KEY production --type secret --yes
     npx vercel@latest redeploy closetos-iota.vercel.app
     ```
-- [ ] **Auth Site URL + redirect URLs** — declared in `supabase/config.toml` and pushed by the `Deploy Supabase` GitHub Action (`supabase config push`). Confirm in Dashboard → Auth → URL Configuration: Site URL = `https://closetos-iota.vercel.app`, redirects include `/auth/callback` on prod + localhost, and `closetos://auth/callback`. If the Action is red, set them by hand.
+- [ ] **Auth Site URL + redirect URLs** — set by the `Deploy Supabase` GitHub Action (Management API PATCH, values in the workflow's `env`). Confirm in Dashboard → Auth → URL Configuration: Site URL = `https://closetos-iota.vercel.app`, redirects include `/auth/callback` on prod + localhost, and `closetos://auth/callback`. If the Action is red, set them by hand.
 - [ ] **GitHub secret `SUPABASE_DB_PASSWORD`** is the *old* project's password → the `Apply migrations` step fails until it's replaced. Reset the DB password in Dashboard → Project Settings → Database, then `gh secret set SUPABASE_DB_PASSWORD`. (`SUPABASE_ACCESS_TOKEN` is account-level and still valid.)
 - [ ] **Google sign-in** — the "Continue with Google" button needs a Google OAuth client ID/secret entered in Dashboard → Auth → Providers → Google (redirect URI `https://ncowtwpxvefhbljwfsxo.supabase.co/auth/v1/callback`). Until then, use the magic link.
 - [ ] **Magic-link email volume** — Supabase's built-in SMTP is capped at a handful of emails/hour. For real users, wire a custom SMTP (Resend/Postmark) in Dashboard → Auth → SMTP Settings.

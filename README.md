@@ -7,6 +7,7 @@ Image-first manual intake, full-text search, calendar/outfits, packing lists, an
 > **Backend:** Supabase project `closetos` (`ncowtwpxvefhbljwfsxo`, ap-south-1 / Mumbai). Schema, RLS, storage buckets and the `process-image` edge function are deployed.
 > **Status:** Phase 0–7 — feature-complete v1. Web is live; mobile builds clean and ships via EAS. See [LAUNCH.md](LAUNCH.md) for what's still open.
 > Every push to `main` auto-deploys the web app via Vercel; changes under `supabase/` auto-deploy via GitHub Actions.
+> **Start here:** [docs/HANDOVER.md](docs/HANDOVER.md) — where everything lives, how to run it day to day, what's open. User guide: [docs/ClosetOS-User-Guide.pdf](docs/ClosetOS-User-Guide.pdf).
 
 ---
 
@@ -29,7 +30,12 @@ ClosetOS/
 │   └── ui/                      # design tokens + primitives (ItemCard, FilterChip, EmptyState)
 ├── supabase/
 │   ├── migrations/              # <version>_0001_init.sql, _0002_match_items_rpc.sql, _0003_drop_ai.sql
+│   ├── templates/               # email templates (token_hash flow; need custom SMTP to push)
 │   └── functions/               # process-image (Deno edge function)
+├── docs/
+│   ├── HANDOVER.md              # start here
+│   ├── ClosetOS-User-Guide.pdf  # client-facing guide (built from user-guide/ by scripts/build-guide-pdf.sh)
+│   └── user-guide/              # guide.html (web) + guide-print.html (PDF source)
 └── turbo.json · pnpm-workspace.yaml · .npmrc (node-linker=hoisted, required for RN/Expo)
 ```
 

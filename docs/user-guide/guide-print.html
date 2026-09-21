@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClosetOS Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+  /* ClosetOS's own tokens (packages/ui/src/tokens.ts) — the guide should feel like the product. */
+  :root {
+    --bg-base: #FAFAF7;
+    --bg-surface: #FFFFFF;
+    --bg-muted: #F4F2EE;
+    --text-primary: #111111;
+    --text-secondary: #525252;
+    --text-muted: #8A8780;
+    --border-subtle: #EAE7E0;
+    --accent: #1F2937;
+    --on-accent: #FFFFFF;
+    --status-available: #16A34A;
+    --status-lent: #D97706;
+    --status-given: #737373;
+    --status-sold: #DC2626;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg-base: #0E0E0C;
+      --bg-surface: #161614;
+      --bg-muted: #1F1E1B;
+      --text-primary: #F4F2EE;
+      --text-secondary: #B4B0A8;
+      --text-muted: #7A7770;
+      --border-subtle: #2A2823;
+      --accent: #F4F2EE;
+      --on-accent: #0E0E0C;
+      --status-available: #22C55E;
+      --status-lent: #FBBF24;
+      --status-given: #A3A3A3;
+      --status-sold: #F87171;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg-base: #0E0E0C;
+    --bg-surface: #161614;
+    --bg-muted: #1F1E1B;
+    --text-primary: #F4F2EE;
+    --text-secondary: #B4B0A8;
+    --text-muted: #7A7770;
+    --border-subtle: #2A2823;
+    --accent: #F4F2EE;
+    --on-accent: #0E0E0C;
+    --status-available: #22C55E;
+    --status-lent: #FBBF24;
+    --status-given: #A3A3A3;
+    --status-sold: #F87171;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: Inter, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 0 20px;
+    padding-block: 48px 96px;
+  }
+  .page { max-width: 68ch; margin: 0 auto; }
+
+  h1, h2, h3 { font-family: Fraunces, Georgia, "Times New Roman", serif; font-weight: 500; letter-spacing: -0.01em; text-wrap: balance; margin: 0; }
+  h1 { font-size: 2.6rem; line-height: 1.1; font-variation-settings: "opsz" 144; }
+  h2 { font-size: 1.7rem; line-height: 1.2; font-variation-settings: "opsz" 72; margin-top: 3.2rem; padding-top: 2rem; border-top: 1px solid var(--border-subtle); }
+  h3 { font-size: 1.1rem; line-height: 1.3; margin-top: 1.6rem; font-family: Inter, sans-serif; font-weight: 600; }
+  p { margin: 0.7rem 0; }
+  .lede { color: var(--text-secondary); font-size: 1.05rem; margin-top: 1rem; max-width: 56ch; }
+  .eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.9rem; }
+  .meta { color: var(--text-muted); font-size: 0.85rem; margin-top: 1.4rem; }
+
+  a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--border-subtle); }
+  a:hover, a:focus-visible { text-decoration-color: currentColor; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  code, kbd { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 0.88em; background: var(--bg-muted); padding: 0.1em 0.4em; border-radius: 4px; }
+
+  /* Where things live: nav labels shown as the product shows them */
+  .ui { display: inline-block; font-weight: 600; font-size: 0.92em; padding: 0 0.35em; border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--bg-surface); white-space: nowrap; }
+
+  /* Contents */
+  .toc { margin-top: 2.4rem; padding: 1.2rem 1.4rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 6px; }
+  .toc ol { margin: 0.4rem 0 0; padding-left: 1.2rem; columns: 2; column-gap: 2rem; }
+  .toc li { padding: 0.15rem 0; break-inside: avoid; }
+  .toc a { text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Quick start — a real sequence, so numbers carry meaning */
+  ol.steps { padding-left: 0; margin: 1rem 0 0; list-style: none; counter-reset: step; }
+  ol.steps li { position: relative; padding-left: 2.4rem; margin: 0.55rem 0; counter-increment: step; }
+  ol.steps li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 0.1rem;
+    width: 1.6rem; height: 1.6rem; border-radius: 999px;
+    background: var(--accent); color: var(--on-accent);
+    font-size: 0.78rem; font-weight: 600; line-height: 1.6rem; text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  ul { padding-left: 1.2rem; margin: 0.5rem 0; }
+  li { margin: 0.25rem 0; }
+
+  /* Feature block: purpose line, then how */
+  .purpose { color: var(--text-secondary); margin-top: 0.6rem; }
+  .note { margin-top: 1rem; padding: 0.8rem 1rem; background: var(--bg-muted); border-radius: 6px; font-size: 0.92rem; color: var(--text-secondary); }
+  .note strong { color: var(--text-primary); }
+
+  /* Tables */
+  .tablewrap { overflow-x: auto; margin-top: 1rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  th, td { text-align: left; vertical-align: top; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--border-subtle); }
+  th { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+
+  /* Status pills — same colours as the app */
+  .pill { display: inline-flex; align-items: center; gap: 0.4em; font-size: 0.85rem; font-weight: 500; white-space: nowrap; }
+  .pill::before { content: ""; width: 0.55em; height: 0.55em; border-radius: 999px; background: var(--dot); }
+  .pill.available { --dot: var(--status-available); }
+  .pill.lent { --dot: var(--status-lent); }
+  .pill.given { --dot: var(--status-given); }
+  .pill.sold { --dot: var(--status-sold); }
+
+  .foot { margin-top: 4rem; padding-top: 1.4rem; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 0.85rem; }
+
+  @media (max-width: 520px) {
+    h1 { font-size: 2.1rem; }
+    .toc ol { columns: 1; }
+  }
+
+  @page { size: A4; margin: 18mm 16mm 20mm; }
+  @media print {
+    :root, :root[data-theme="dark"] {
+      --bg-base: #FFFFFF; --bg-surface: #FFFFFF; --bg-muted: #F4F2EE;
+      --text-primary: #111111; --text-secondary: #525252; --text-muted: #8A8780;
+      --border-subtle: #EAE7E0; --accent: #1F2937; --on-accent: #FFFFFF;
+      --status-available: #16A34A; --status-lent: #D97706; --status-given: #737373; --status-sold: #DC2626;
+    }
+    body { padding: 0; font-size: 10.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { max-width: none; }
+    h2 { break-after: avoid; page-break-after: avoid; }
+    h3 { break-after: avoid; page-break-after: avoid; }
+    .toc, .note, table, ol.steps li { break-inside: avoid; page-break-inside: avoid; }
+    h2 { margin-top: 2.2rem; padding-top: 1.4rem; }
+    a { text-decoration: none; }
+    .meta a::after { content: ""; }
+  }
+</style>
+
+</head><body>
+<main class="page">
+  <p class="eyebrow">User guide</p>
+  <h1>ClosetOS</h1>
+  <p class="lede">One private place for everything you own and wear — apparel, accessories, jewellery, silver and artwork — with the tools to plan outfits, pack for trips and share a piece with someone you trust.</p>
+  <p class="meta">Web app · works on phone and laptop · <a href="https://closetos-iota.vercel.app">closetos-iota.vercel.app</a></p>
+
+  <nav class="toc" aria-label="Contents">
+    <span class="eyebrow" style="margin:0">In this guide</span>
+    <ol>
+      <li><a href="#start">Getting started</a></li>
+      <li><a href="#library">Library</a></li>
+      <li><a href="#fields">What you can record</a></li>
+      <li><a href="#outfits">Outfits</a></li>
+      <li><a href="#calendar">Calendar</a></li>
+      <li><a href="#packing">Packing</a></li>
+      <li><a href="#wishlist">Wishlist</a></li>
+      <li><a href="#share">Sharing</a></li>
+      <li><a href="#account">Your data</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="start">Getting started</h2>
+  <p class="purpose">You'll receive an email address and password from whoever set up your account. There's nothing to install.</p>
+  <ol class="steps">
+    <li>Open <a href="https://closetos-iota.vercel.app/login">closetos-iota.vercel.app/login</a> on any phone or computer.</li>
+    <li>Enter your email and password → <span class="ui">Sign in</span>.</li>
+    <li>First time in, you'll see a short welcome with three suggested steps: add an item, compose an outfit, plan a trip. Start with the first.</li>
+  </ol>
+  <div class="note"><strong>Navigation.</strong> The top bar has <span class="ui">Library</span> · <span class="ui">Outfits</span> · <span class="ui">Calendar</span> · <span class="ui">Wishlist</span> · <span class="ui">Packing</span> · <span class="ui">Add item</span>, and your email on the right opens <span class="ui">Account</span>. The front page (the ClosetOS logo) shows sample pieces as a preview — those are examples, not your items. Your items are in Library.</div>
+
+  <h2 id="library">Library</h2>
+  <p class="purpose">Every item you own, in one grid. Photo first, details behind it.</p>
+
+  <h3>Add an item</h3>
+  <ol class="steps">
+    <li><span class="ui">Add item</span> in the top bar.</li>
+    <li>Click the square to add a photo (or drop one in). One photo per item.</li>
+    <li>Pick a category — Apparel, Accessories, Jewelry, Silver, Artwork. The fields below change to fit it (see <a href="#fields">What you can record</a>).</li>
+    <li>Fill in what you know. Only artwork needs a title; everything else is optional.</li>
+    <li><span class="ui">Save item</span>. You land on the item's page.</li>
+  </ol>
+
+  <h3>Find things</h3>
+  <ul>
+    <li><strong>Category chips</strong> at the top of Library filter to one category; each chip shows its count.</li>
+    <li><strong>Search</strong> matches title, brand, colour, material and notes — e.g. <code>navy linen</code>.</li>
+  </ul>
+
+  <h3>An item's page</h3>
+  <ul>
+    <li><span class="ui">Edit</span> — change any detail, replace the photo, or set the status.</li>
+    <li><span class="ui">Share</span> — a view-only link for this item (see <a href="#share">Sharing</a>).</li>
+    <li><span class="ui">Delete item</span> at the bottom — asks you to confirm; removes the item, its photo, and takes it out of any outfit or packing list.</li>
+    <li><strong>Last worn</strong> appears automatically once the item has been in a dated outfit.</li>
+  </ul>
+
+  <h3>Status</h3>
+  <p>Set on Edit. Useful for pieces that are out of the house without deleting their record.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Status</th><th>Meaning</th></tr>
+    <tr><td><span class="pill available">Available</span></td><td>Default. In your possession.</td></tr>
+    <tr><td><span class="pill lent">Lent</span></td><td>Someone has it; you expect it back.</td></tr>
+    <tr><td><span class="pill given">Given away</span></td><td>No longer yours, kept for the record.</td></tr>
+    <tr><td><span class="pill sold">Sold</span></td><td>Sold on, kept for the record.</td></tr>
+  </table></div>
+
+  <h2 id="fields">What you can record</h2>
+  <p class="purpose">Every item has the same base — brand, colour, material, price, purchase date, notes — plus fields specific to its category.</p>
+  <div class="tablewrap"><table>
+    <tr><th>Category</th><th>Extra fields</th></tr>
+    <tr><td>Apparel</td><td>Size · Care instructions</td></tr>
+    <tr><td>Accessories</td><td>Size</td></tr>
+    <tr><td>Jewelry</td><td>Weight (g) · Hallmark</td></tr>
+    <tr><td>Silver</td><td>Weight (g)</td></tr>
+    <tr><td>Artwork</td><td>Title (required) · Type (painting, sculpture, print, photograph, digital, mixed media) · Medium · Artist · Artist bio · Date created · Date acquired · Purchase price · Current estimated value · Location (room / storage) · Provenance · Insurance status and value · Condition (mint → poor)</td></tr>
+  </table></div>
+  <p class="note">Prices are recorded in INR. Leave any field blank rather than guessing — you can always come back with Edit.</p>
+
+  <h2 id="outfits">Outfits</h2>
+  <p class="purpose">Group items into a look, and optionally record the day you wore it.</p>
+  <ol class="steps">
+    <li><span class="ui">Outfits</span> → <span class="ui">New outfit</span>.</li>
+    <li>Give it a name (e.g. <em>Diwali brunch</em>), an occasion, and notes if you like.</li>
+    <li>Tap items to add them — your whole library is offered, grouped by category.</li>
+    <li><strong>Date worn (optional).</strong> Add a date and two things happen: the outfit appears on that day in Calendar, and each apparel or accessory item in it gets that date as <em>Last worn</em>.</li>
+    <li><span class="ui">Save outfit</span>.</li>
+  </ol>
+  <p>An outfit's page shows its items with photos; each one links back to the item. Outfits can be shared like items.</p>
+
+  <h2 id="calendar">Calendar</h2>
+  <p class="purpose">A month at a glance: which outfits you wore, and when.</p>
+  <ul>
+    <li>Use the ← → arrows to move between months. Days with a logged outfit show it as a pill.</li>
+    <li>Click a day to open it. From an empty day, <span class="ui">Compose outfit for this day</span> opens the outfit composer with the date already filled in.</li>
+    <li>A day's view lists every outfit logged that day and the items in each.</li>
+  </ul>
+
+  <h2 id="packing">Packing</h2>
+  <p class="purpose">Plan a trip, get suggestions from your own wardrobe based on the forecast, then tick things off as you pack.</p>
+  <ol class="steps">
+    <li><span class="ui">Packing</span> → <span class="ui">New trip</span>.</li>
+    <li>Trip name, destination (a city or place), start and end dates, and a trip type: leisure, beach, work, wedding, travel, evening, formal.</li>
+    <li><span class="ui">Get suggestions from your library</span>. ClosetOS looks up the destination, pulls the forecast for your dates, and picks apparel and accessories from your Library — showing the expected highs, lows and chance of rain, and how many items it matched.</li>
+    <li><span class="ui">Save trip</span>. The suggested items become the trip's checklist.</li>
+    <li>On the trip's page, items are grouped by category with a checkbox each. Tick as you pack; the trips list shows how far along you are.</li>
+  </ol>
+  <div class="note"><strong>Forecast range.</strong> Live weather is available about two weeks ahead. For trips further out, suggestions use the season for that month instead of a forecast.</div>
+
+  <h2 id="wishlist">Wishlist</h2>
+  <p class="purpose">Things you're considering, kept separate from what you own.</p>
+  <ul>
+    <li><span class="ui">Wishlist</span> → <span class="ui">Add to wishlist</span>: title, a link to where it's sold, an image link, category, current price and your target price, notes.</li>
+    <li>The wishlist grid shows the image, both prices and a link out to the source.</li>
+  </ul>
+
+  <h2 id="share">Sharing</h2>
+  <p class="purpose">Show one item or one outfit to someone without giving them your login.</p>
+  <ol class="steps">
+    <li>On the item or outfit page, <span class="ui">Share</span>.</li>
+    <li>Choose how long the link lasts: 7 days, 30 days, or never expires.</li>
+    <li><span class="ui">Create share link</span> → <span class="ui">Copy</span> and send it however you like.</li>
+  </ol>
+  <p>Whoever opens it sees a read-only page with the photo and details — nothing else from your library. Links can't be switched off from the app yet, so prefer 7 or 30 days over <em>never</em> unless you mean it.</p>
+
+  <h2 id="account">Your data</h2>
+  <p class="purpose">It's yours. <span class="ui">Account</span> (your email, top right) shows your item and outfit counts and two actions.</p>
+  <ul>
+    <li><span class="ui">Download export (.zip)</span> — every item, outfit, calendar entry, wishlist and trip as data files, plus your original photos.</li>
+    <li><span class="ui">Delete account</span> — permanently removes everything, including photos. You're asked to confirm; there's no undo.</li>
+  </ul>
+
+  <p class="foot">ClosetOS · built by IT Squared · guide for the preview release, September 2026</p>
+</main>
+
+</body></html>
